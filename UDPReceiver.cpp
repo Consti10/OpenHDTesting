@@ -6,6 +6,7 @@
 #include <sstream>
 #include <array>
 #include "StringHelper.hpp"
+#include <cstring>
 
 #ifdef __ANDROID__
 #include <AndroidThreadPrioValues.hpp>

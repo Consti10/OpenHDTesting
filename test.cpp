@@ -63,6 +63,57 @@ static void generateDataPackets(std::function<void(std::vector<uint8_t>&)> cb,co
     }
 }
 
+static void test_latency(){
+    // For a packet size of 1024 bytes, 1024 packets per second equals 1 MB/s or 8 MBit/s
+    // 8 MBit/s is a just enough for encoded 720p video
+    const int PACKET_SIZE=1024;
+    const int WANTED_PACKETS_PER_SECOND=2*1024;
+    const std::chrono::nanoseconds TIME_BETWEEN_PACKETS=std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::seconds(1))/WANTED_PACKETS_PER_SECOND;
+    const int N_PACKETS=WANTED_PACKETS_PER_SECOND*5;
+
+    // start the receiver in its own thread
+    UDPReceiver udpReceiver{nullptr,6001,"LTUdpRec",0,validateReceivedData,0};
+    udpReceiver.startReceiving();
+    // Wait a bit such that the OS can start the receiver before we start sending data
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+    UDPSender udpSender{"127.0.0.1",6001};
+    currentSequenceNumber=0;
+    avgUDPProcessingTime.reset();
+
+    const std::chrono::steady_clock::time_point testBegin=std::chrono::steady_clock::now();
+    std::chrono::steady_clock::time_point firstPacketTimePoint=std::chrono::steady_clock::now();
+    std:size_t writtenBytes=0;
+    std::size_t writtenPackets=0;
+    for(int i=0;i<N_PACKETS;i++){
+        auto buff=createRandomDataBuffer(PACKET_SIZE);
+        writeSequenceNumberAndTimestamp(buff);
+        udpSender.mySendTo(buff.data(),buff.size());
+        writtenBytes+=PACKET_SIZE;
+        writtenPackets+=1;
+        currentSequenceNumber++;
+        // wait until as much time is elapsed such that we hit the target packets per seconds
+        const auto timePointReadyToSendNextPacket=firstPacketTimePoint+i*TIME_BETWEEN_PACKETS;
+        while(std::chrono::steady_clock::now()<timePointReadyToSendNextPacket){
+            //busy wait
+        }
+    }
+    const auto testEnd=std::chrono::steady_clock::now();
+    const double testTimeSeconds=(testEnd-testBegin).count()/1000.0f/1000.0f/1000.0f;
+    const double actualPacketsPerSecond=(double)N_PACKETS/testTimeSeconds;
+    const double actualMBytesPerSecond=(double)writtenBytes/testTimeSeconds/1024.0f/1024;
+
+   // Wait for any packet that might be still in transit
+   std::this_thread::sleep_for(std::chrono::seconds(1));
+   udpReceiver.stopReceiving();
+
+
+   MLOGD<<"WANTED_PACKETS_PER_SECOND "<<WANTED_PACKETS_PER_SECOND<<" Got "<<actualPacketsPerSecond<<" TTS "<<testTimeSeconds<<" MB/s "<<actualMBytesPerSecond;
+   MLOGD<<"Avg UDP processing time "<<avgUDPProcessingTime.getAvgReadable();
+
+}
+
+
 int main(int argc, char *argv[])
 {
     std::cout << "There are " << argc << " arguments:\n";

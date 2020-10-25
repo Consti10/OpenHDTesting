@@ -100,6 +100,7 @@ static void test_latency(){
         const auto timePointReadyToSendNextPacket=firstPacketTimePoint+i*TIME_BETWEEN_PACKETS;
         while(std::chrono::steady_clock::now()<timePointReadyToSendNextPacket){
             //busy wait
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
     }
     const auto testEnd=std::chrono::steady_clock::now();

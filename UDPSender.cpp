@@ -60,7 +60,7 @@ void UDPSender::mySendTo(const uint8_t* data, ssize_t data_length) {
     }
     timeSpentSending.stop();
     if(timeSpentSending.getNSamples()>100){
-        MLOGD<<"TimeSS "<<timeSpentSending.getAvgReadable();
+        //MLOGD<<"TimeSS "<<timeSpentSending.getAvgReadable();
         timeSpentSending.reset();
     }
 }

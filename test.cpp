@@ -111,7 +111,7 @@ static void test_latency(){
 
    // Wait for any packet that might be still in transit
    std::this_thread::sleep_for(std::chrono::seconds(1));
-   udpReceiver.stopReceiving();
+   //udpReceiver.stopReceiving();
 
    MLOGD<<"Testing took:"<<testTimeSeconds<<"\n";	
    MLOGD<<"WANTED_PACKETS_PER_SECOND "<<WANTED_PACKETS_PER_SECOND<<" Got "<<actualPacketsPerSecond<<

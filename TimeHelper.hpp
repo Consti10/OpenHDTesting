@@ -216,7 +216,7 @@ public:
         const auto now=std::chrono::steady_clock::now();
         if(now-lastLog>interval){
             lastLog=now;
-            MLOGD2(mName)<<"Avg: "<<AvgCalculator::getAvgReadable(avgOnly);
+            //MLOGD2(mName)<<"Avg: "<<AvgCalculator::getAvgReadable(avgOnly);
             reset();
         }
     }
@@ -258,7 +258,7 @@ public:
     MeasureExecutionTime(const std::string& tag,const std::string& functionName):functionName(functionName),tag(tag),begin(std::chrono::steady_clock::now()){}
     ~MeasureExecutionTime(){
         const auto duration=std::chrono::steady_clock::now()-begin;
-        MLOGD2(tag)<<"Execution time for "<<functionName<<" is "<<std::chrono::duration_cast<std::chrono::milliseconds>(duration).count()<<"ms";
+        //MLOGD2(tag)<<"Execution time for "<<functionName<<" is "<<std::chrono::duration_cast<std::chrono::milliseconds>(duration).count()<<"ms";
     }
 };
 

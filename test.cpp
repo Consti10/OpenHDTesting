@@ -67,15 +67,24 @@ static void generateDataPackets(std::function<void(std::vector<uint8_t>&)> cb,co
     }
 }
 
-static void test_latency(const int PACKET_SIZE,const int WANTED_PACKETS_PER_SECOND,const int N_PACKETS){
-	const std::chrono::nanoseconds TIME_BETWEEN_PACKETS=std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::seconds(1))/WANTED_PACKETS_PER_SECOND;
+struct Options{
+    const int PACKET_SIZE=1024;
+    const int WANTED_PACKETS_PER_SECOND=1024;
+    const int N_PACKETS=WANTED_PACKETS_PER_SECOND*5;
+    const int INPUT_PORT=6001;
+    const int OUTPUT_PORT=6001;
+};
+
+
+static void test_latency(const Options& o){
+	const std::chrono::nanoseconds TIME_BETWEEN_PACKETS=std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::seconds(1))/o.WANTED_PACKETS_PER_SECOND;
     // start the receiver in its own thread
-    UDPReceiver udpReceiver{nullptr,6002,"LTUdpRec",0,validateReceivedData,0};
+    UDPReceiver udpReceiver{nullptr,o.INPUT_PORT,"LTUdpRec",0,validateReceivedData,0};
     udpReceiver.startReceiving();
     // Wait a bit such that the OS can start the receiver before we start sending data
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
-    UDPSender udpSender{"127.0.0.1",6002};
+    UDPSender udpSender{"127.0.0.1",o.OUTPUT_PORT};
 	//UDPSender udpSender{"192.168.0.14",6002};
     currentSequenceNumber=0;
     avgUDPProcessingTime.reset();
@@ -84,8 +93,8 @@ static void test_latency(const int PACKET_SIZE,const int WANTED_PACKETS_PER_SECO
     std::chrono::steady_clock::time_point firstPacketTimePoint=std::chrono::steady_clock::now();
     std:size_t writtenBytes=0;
     std::size_t writtenPackets=0;
-    for(int i=0;i<N_PACKETS;i++){
-        auto buff=createRandomDataBuffer(PACKET_SIZE);
+    for(int i=0;i<o.N_PACKETS;i++){
+        auto buff=createRandomDataBuffer(o.PACKET_SIZE);
         writeSequenceNumberAndTimestamp(buff);
         udpSender.mySendTo(buff.data(),buff.size());
 		//std::this_thread::sleep_for(std::chrono::microseconds(1));
@@ -120,24 +129,26 @@ static void test_latency(const int PACKET_SIZE,const int WANTED_PACKETS_PER_SECO
 
 int main(int argc, char *argv[])
 {
-	 int opt;
+	int opt;
     int ps=1024;
     int pps=2*1024;
     int wantedTime=5; // 5 seconds
-    while ((opt = getopt(argc, argv, "s:p:t:")) != -1) {
+	int output_port=6001;
+	int input_port=6001;
+    while ((opt = getopt(argc, argv, "s:x:t:")) != -1) {
         switch (opt) {
         case 's':
             ps = atoi(optarg);
             break;
-        case 'p':
+        case 'x':
             pps = atoi(optarg);
             break;
         case 't':
             wantedTime = atoi(optarg);
-            break;
+            break;	
         default: /* '?' */
         show_usage:
-            MLOGD<<"Usage: [-s=packet size in bytes] [-p=packets per second] [-t=time to run in seconds]\n";
+            MLOGD<<"Usage: [-s=packet size in bytes] [-x=packets per second] [-t=time to run in seconds]\n";
             return 1;
         }
     }

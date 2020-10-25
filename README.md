@@ -1,3 +1,8 @@
+Compile code:
+g++ -std=c++17 test.cpp UDPReceiver.cpp UDPSender.cpp -o test -lpthread
+
+Collection of commands:
+
 Receive via udp and write to file
 nc -u -l 5060 > newfile.txt
 
@@ -11,9 +16,3 @@ nc -u -l 6002 | nc -u "192.168.0.13" 6003
 Same but forward via svpcom
 
 
-
-Then open the receiving file
-
-g++ -std=c++17 test.cpp -o test
-
-g++ -std=c++17 test.cpp UDPReceiver.cpp UDPSender.cpp -o test -lpthread

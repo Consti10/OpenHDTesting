@@ -123,6 +123,7 @@ int main(int argc, char *argv[])
     {
         std::cout << count << ' ' << argv[count] << '\n';
     }
+	test_latency();
  
     return 0;
 }

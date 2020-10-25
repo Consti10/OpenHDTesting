@@ -155,7 +155,8 @@ int main(int argc, char *argv[])
 	
     // For a packet size of 1024 bytes, 1024 packets per second equals 1 MB/s or 8 MBit/s
     // 8 MBit/s is a just enough for encoded 720p video
-	test_latency(ps,pps,wantedTime*pps);
+	const Options options{ps,pps,N_PACKETS};
+	test_latency(options);
  
     return 0;
 }

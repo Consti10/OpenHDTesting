@@ -1,5 +1,8 @@
 // Program: MyArgs
 #include <iostream>
+
+#include "AndroidLogger.hpp"
+#include "TimeHelper.hpp"
  
 int main(int argc, char *argv[])
 {

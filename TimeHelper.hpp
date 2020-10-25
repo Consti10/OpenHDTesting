@@ -196,6 +196,15 @@ public:
         ss<<"min="<<MyTimeHelper::R(getMin())<<" max="<<MyTimeHelper::R(getMax())<<" avg="<<MyTimeHelper::R(getAvg())<<" N samples="<<samples.size();
         return ss.str();
     }
+	std::string getAvgReadable(const bool averageOnly=false)const{
+        std::stringstream ss;
+        if(averageOnly){
+            ss<<"avg="<<MyTimeHelper::R(getAvg());
+            return ss.str();
+        }
+        ss<<"min="<<MyTimeHelper::R(getMin())<<" max="<<MyTimeHelper::R(getMax())<<" avg="<<MyTimeHelper::R(getAvg())<<" N samples="<<samples.size();
+        return ss.str();
+    }
     size_t getNSamples()const{
         return samples.size();
     }

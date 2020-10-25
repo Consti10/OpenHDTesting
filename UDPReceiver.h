@@ -9,6 +9,7 @@
 #include <iostream>
 #include <thread>
 #include <atomic>
+#include <functional>
 //
 #ifdef __ANDROID__
 #include <jni.h>

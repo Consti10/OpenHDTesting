@@ -39,7 +39,7 @@ void writeSequenceNumberAndTimestamp(std::vector<uint8_t>& data){
 PacketInfoData getSequenceNumberAndTimestamp(const std::vector<uint8_t>& data){
     assert(data.size()>=sizeof(PacketInfoData));
     PacketInfoData packetInfoData;
-    memcpy(&packetInfoData,data.data(),sizeof(PacketInfoData));
+    std::memcpy(&packetInfoData,data.data(),sizeof(PacketInfoData));
     return packetInfoData;
 }
 

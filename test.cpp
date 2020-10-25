@@ -49,7 +49,7 @@ static void validateReceivedData(const uint8_t* dataP,size_t data_length){
     auto data=std::vector<uint8_t>(dataP,dataP+data_length);
     const auto info=getSequenceNumberAndTimestamp(data);
     const auto latency=std::chrono::steady_clock::now()-info.timestamp;
-    MLOGD<<"XGot data"<<data_length<<" "<<info.seqNr<<" "<<MyTimeHelper::R(latency);
+    MLOGD<<"XGot data"<<data_length<<" "<<info.seqNr<<" "<<MyTimeHelper::R(latency)<<"\n";
     // do not use the first couple of packets, system needs to ramp up first
     if(info.seqNr>10){
         avgUDPProcessingTime.add(latency);
@@ -108,8 +108,8 @@ static void test_latency(){
    udpReceiver.stopReceiving();
 
 
-   MLOGD<<"WANTED_PACKETS_PER_SECOND "<<WANTED_PACKETS_PER_SECOND<<" Got "<<actualPacketsPerSecond<<" TTS "<<testTimeSeconds<<" MB/s "<<actualMBytesPerSecond;
-   MLOGD<<"Avg UDP processing time "<<avgUDPProcessingTime.getAvgReadable();
+   MLOGD<<"WANTED_PACKETS_PER_SECOND "<<WANTED_PACKETS_PER_SECOND<<" Got "<<actualPacketsPerSecond<<" TTS "<<testTimeSeconds<<" MB/s "<<actualMBytesPerSecond<<"\n";
+   MLOGD<<"Avg UDP processing time "<<avgUDPProcessingTime.getAvgReadable()<<"\n";
 
 }
 

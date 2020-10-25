@@ -105,8 +105,8 @@ static void test_latency(const Options& o){
         // wait until as much time is elapsed such that we hit the target packets per seconds
         const auto timePointReadyToSendNextPacket=firstPacketTimePoint+i*TIME_BETWEEN_PACKETS;
         while(std::chrono::steady_clock::now()<timePointReadyToSendNextPacket){
-            //busy wait
-			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            //ucomment for busy wait (no scheduler interruption)
+			std::this_thread::sleep_for(std::chrono::microseconds(10));
         }
     }
     const auto testEnd=std::chrono::steady_clock::now();

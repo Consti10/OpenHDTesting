@@ -68,7 +68,7 @@ static void generateDataPackets(std::function<void(std::vector<uint8_t>&)> cb,co
 }
 
 static void test_latency(const int PACKET_SIZE,const int WANTED_PACKETS_PER_SECOND,const int N_PACKETS){
-
+	const std::chrono::nanoseconds TIME_BETWEEN_PACKETS=std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::seconds(1))/WANTED_PACKETS_PER_SECOND;
     // start the receiver in its own thread
     UDPReceiver udpReceiver{nullptr,6002,"LTUdpRec",0,validateReceivedData,0};
     udpReceiver.startReceiving();

@@ -43,7 +43,8 @@ PacketInfoData getSequenceNumberAndTimestamp(const std::vector<uint8_t>& data){
     return packetInfoData;
 }
 
-AvgCalculator2 avgUDPProcessingTime{1024*1024};
+//AvgCalculator2 avgUDPProcessingTime{1024*1024};
+AvgCalculator avgUDPProcessingTime;
 
 static void validateReceivedData(const uint8_t* dataP,size_t data_length){
     auto data=std::vector<uint8_t>(dataP,dataP+data_length);
@@ -110,7 +111,7 @@ static void test_latency(){
 
    MLOGD<<"WANTED_PACKETS_PER_SECOND "<<WANTED_PACKETS_PER_SECOND<<" Got "<<actualPacketsPerSecond<<" TTS "<<testTimeSeconds<<" MB/s "<<actualMBytesPerSecond<<"\n";
    MLOGD<<"Avg UDP processing time "<<avgUDPProcessingTime.getAvgReadable()<<"\n";
-   MLOGD<<"All samples "<<avgUDPProcessingTime.getAllSamplesAsString();
+   //MLOGD<<"All samples "<<avgUDPProcessingTime.getAllSamplesAsString();
 }
 
 

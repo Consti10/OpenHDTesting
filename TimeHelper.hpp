@@ -8,6 +8,7 @@
 #include "AndroidLogger.hpp"
 #include <chrono>
 #include <deque>
+#include <algorithm>
 #include "StringHelper.hpp"
 
 namespace MyTimeHelper{

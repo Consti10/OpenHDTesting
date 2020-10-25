@@ -52,7 +52,7 @@ private:
     T min=std::numeric_limits<T>::max();
     T max{};
 public:
-    BaseAvgCalculator() = default;
+    BaseAvgCalculator(){reset();};
     void add(const T& value){
         if(value<T(0)){
             MLOGE<<"Cannot add negative value";
@@ -89,7 +89,12 @@ public:
     void reset(){
         sum={};
         nSamples=0;
-        min=std::numeric_limits<T>::max();
+        // Workaround for std::numeric_limits returning 0 for std::chrono::nanoseconds
+        if constexpr (std::is_same_v<T,std::chrono::nanoseconds>){
+            min=std::chrono::nanoseconds::max();
+        }else{
+            min=std::numeric_limits<T>::max();
+        }
         max={};
     }
     // Merges two AvgCalculator(s) that hold the same types of samples together

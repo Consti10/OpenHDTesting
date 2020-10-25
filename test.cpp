@@ -93,7 +93,7 @@ static void test_latency(){
         auto buff=createRandomDataBuffer(PACKET_SIZE);
         writeSequenceNumberAndTimestamp(buff);
         //udpSender.mySendTo(buff.data(),buff.size());
-		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		std::this_thread::sleep_for(std::chrono::microseconds(1));
 		validateReceivedData(buff.data(),buff.size());
         writtenBytes+=PACKET_SIZE;
         writtenPackets+=1;

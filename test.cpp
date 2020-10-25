@@ -1,6 +1,4 @@
-// Program: MyArgs
 #include <iostream>
-
 #include "AndroidLogger.hpp"
 #include "TimeHelper.hpp"
 #include "UDPSender.h"
@@ -129,6 +127,8 @@ static void test_latency(const Options& o){
 
 int main(int argc, char *argv[])
 {
+	// For testing the localhost latency just use the same udp port for input and output
+	// For testing wb latency TODO
 	int opt;
     int ps=1024;
     int pps=2*1024;
@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
 			break;
         default: /* '?' */
         show_usage:
-            MLOGD<<"Usage: [-s=packet size in bytes] [-x=packets per second] [-t=time to run in seconds]\n";
+            MLOGD<<"Usage: [-s=packet size in bytes] [-p=packets per second] [-t=time to run in seconds] [-i=input udp port] [-o=output udp port]\n";
             return 1;
         }
     }

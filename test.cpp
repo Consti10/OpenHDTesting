@@ -24,7 +24,7 @@ struct PacketInfoData{
     uint32_t seqNr;
     std::chrono::steady_clock::time_point timestamp;
 } __attribute__ ((packed));
-static_assert(sizeof(PacketInfoData)==4+8);
+//static_assert(sizeof(PacketInfoData)==4+8);
 
 uint32_t currentSequenceNumber=0;
 

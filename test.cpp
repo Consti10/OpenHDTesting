@@ -3,6 +3,7 @@
 
 #include "AndroidLogger.hpp"
 #include "TimeHelper.hpp"
+#include "UDPSender.h"
  
 int main(int argc, char *argv[])
 {

@@ -71,7 +71,7 @@ static void test_latency(){
     // For a packet size of 1024 bytes, 1024 packets per second equals 1 MB/s or 8 MBit/s
     // 8 MBit/s is a just enough for encoded 720p video
     const int PACKET_SIZE=1024;
-    const int WANTED_PACKETS_PER_SECOND=5*1024;
+    const int WANTED_PACKETS_PER_SECOND=2*1024;
     const std::chrono::nanoseconds TIME_BETWEEN_PACKETS=std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::seconds(1))/WANTED_PACKETS_PER_SECOND;
     const int N_PACKETS=WANTED_PACKETS_PER_SECOND*5;
 

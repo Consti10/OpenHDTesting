@@ -124,12 +124,12 @@ int main(int argc, char *argv[])
     int ps=1024;
     int pps=2*1024;
     int wantedTime=5; // 5 seconds
-    while ((opt = getopt(argc, argv, "ps:pps:t:")) != -1) {
+    while ((opt = getopt(argc, argv, "s:p:t:")) != -1) {
         switch (opt) {
-        case 'ps':
+        case 's':
             ps = atoi(optarg);
             break;
-        case 'pps':
+        case 'p':
             pps = atoi(optarg);
             break;
         case 't':
@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
             break;
         default: /* '?' */
         show_usage:
-            MLOGD<<"Usage: [-PS=packet size in bytes] [-PPS=packets per second] [-T=time to run in seconds]\n";
+            MLOGD<<"Usage: [-s=packet size in bytes] [-p=packets per second] [-t=time to run in seconds]\n";
             return 1;
         }
     }

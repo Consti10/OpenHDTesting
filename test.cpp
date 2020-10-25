@@ -99,7 +99,7 @@ static void test_latency(const Options& o){
         udpSender.mySendTo(buff.data(),buff.size());
 		//std::this_thread::sleep_for(std::chrono::microseconds(1));
 		//validateReceivedData(buff.data(),buff.size());
-        writtenBytes+=PACKET_SIZE;
+        writtenBytes+=o.PACKET_SIZE;
         writtenPackets+=1;
         currentSequenceNumber++;
         // wait until as much time is elapsed such that we hit the target packets per seconds
@@ -111,17 +111,17 @@ static void test_latency(const Options& o){
     }
     const auto testEnd=std::chrono::steady_clock::now();
     const double testTimeSeconds=(testEnd-testBegin).count()/1000.0f/1000.0f/1000.0f;
-    const double actualPacketsPerSecond=(double)N_PACKETS/testTimeSeconds;
+    const double actualPacketsPerSecond=(double)o.N_PACKETS/testTimeSeconds;
     const double actualMBytesPerSecond=(double)writtenBytes/testTimeSeconds/1024.0f/1024;
 
    // Wait for any packet that might be still in transit
    std::this_thread::sleep_for(std::chrono::seconds(1));
    udpReceiver.stopReceiving();
 
-   MLOGD<<"Testing took:"<<testTimeSeconds<<"\n";	
-   MLOGD<<"WANTED_PACKETS_PER_SECOND "<<WANTED_PACKETS_PER_SECOND<<" Got "<<actualPacketsPerSecond<<
+   MLOGD<<"Testing took:"<<testTimeSeconds<<"\n";
+   MLOGD<<"WANTED_PACKETS_PER_SECOND "<<o.WANTED_PACKETS_PER_SECOND<<" Got "<<actualPacketsPerSecond<<
    " achieved bitrate: "<<actualMBytesPerSecond<<" MB/s"<<"\n";
-   
+
    MLOGD<<"Avg UDP processing time "<<avgUDPProcessingTime.getAvgReadable()<<"\n";
    //MLOGD<<"All samples "<<avgUDPProcessingTime.getAllSamplesAsString();
 }
@@ -145,18 +145,18 @@ int main(int argc, char *argv[])
             break;
         case 't':
             wantedTime = atoi(optarg);
-            break;	
+            break;
         default: /* '?' */
         show_usage:
             MLOGD<<"Usage: [-s=packet size in bytes] [-x=packets per second] [-t=time to run in seconds]\n";
             return 1;
         }
     }
-	
+
     // For a packet size of 1024 bytes, 1024 packets per second equals 1 MB/s or 8 MBit/s
     // 8 MBit/s is a just enough for encoded 720p video
-	const Options options{ps,pps,N_PACKETS};
+	const Options options{ps,pps,pps*wantedTime};
 	test_latency(options);
- 
+
     return 0;
 }

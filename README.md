@@ -15,4 +15,8 @@ nc -u -l 6002 | nc -u "192.168.0.13" 6003
 //
 Same but forward via svpcom
 
+// make executable
+chmod u+x my_wfb_rx.sh
+
+
 

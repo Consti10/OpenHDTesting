@@ -111,8 +111,10 @@ static void test_latency(){
    std::this_thread::sleep_for(std::chrono::seconds(1));
    udpReceiver.stopReceiving();
 
-
-   MLOGD<<"WANTED_PACKETS_PER_SECOND "<<WANTED_PACKETS_PER_SECOND<<" Got "<<actualPacketsPerSecond<<" TTS "<<testTimeSeconds<<" MB/s "<<actualMBytesPerSecond<<"\n";
+   MLOGD<<"Testing took:"<<testTimeSeconds<<"\n";	
+   MLOGD<<"WANTED_PACKETS_PER_SECOND "<<WANTED_PACKETS_PER_SECOND<<" Got "<<actualPacketsPerSecond<<
+   " achieved bitrate: "<<actualMBytesPerSecond<<" MB/s"<<"\n";
+   
    MLOGD<<"Avg UDP processing time "<<avgUDPProcessingTime.getAvgReadable()<<"\n";
    //MLOGD<<"All samples "<<avgUDPProcessingTime.getAllSamplesAsString();
 }

@@ -12,7 +12,7 @@
 #include <cmath>
 #include <iomanip>
 #include <assert.h>
-#include <iostream.h>
+#include <iostream>
 
 class StringHelper{
 private:

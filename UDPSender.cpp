@@ -11,6 +11,7 @@
 #include <endian.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <cstring>
 #include "AndroidLogger.hpp"
 #include "StringHelper.hpp"
 

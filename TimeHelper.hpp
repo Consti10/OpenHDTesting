@@ -8,7 +8,7 @@
 #include "AndroidLogger.hpp"
 #include <chrono>
 #include <deque>
-#include <StringHelper.hpp>
+#include "StringHelper.hpp"
 
 namespace MyTimeHelper{
     // R stands for readable. Convert a std::chrono::duration into a readable format

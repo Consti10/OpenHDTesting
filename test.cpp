@@ -76,12 +76,12 @@ static void test_latency(){
     const int N_PACKETS=WANTED_PACKETS_PER_SECOND*5;
 
     // start the receiver in its own thread
-    UDPReceiver udpReceiver{nullptr,6001,"LTUdpRec",0,validateReceivedData,0};
+    UDPReceiver udpReceiver{nullptr,6003,"LTUdpRec",0,validateReceivedData,0};
     udpReceiver.startReceiving();
     // Wait a bit such that the OS can start the receiver before we start sending data
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
-    UDPSender udpSender{"127.0.0.1",6001};
+    UDPSender udpSender{"127.0.0.1",6002};
     currentSequenceNumber=0;
     avgUDPProcessingTime.reset();
 

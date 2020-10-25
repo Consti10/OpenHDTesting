@@ -124,15 +124,15 @@ int main(int argc, char *argv[])
     int ps=1024;
     int pps=2*1024;
     int wantedTime=5; // 5 seconds
-    while ((opt = getopt(argc, argv, "PS:PPS:T:")) != -1) {
+    while ((opt = getopt(argc, argv, "ps:pps:t:")) != -1) {
         switch (opt) {
-        case 'PS':
+        case 'ps':
             ps = atoi(optarg);
             break;
-        case 'PPS':
+        case 'pps':
             pps = atoi(optarg);
             break;
-        case 'T':
+        case 't':
             wantedTime = atoi(optarg);
             break;
         default: /* '?' */

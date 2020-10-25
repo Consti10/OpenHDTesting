@@ -1,0 +1,9 @@
+Receive via udp and write to file
+nc -u -l 5060 > newfile.txt
+
+Send file via udp
+cat newfile.txt | nc -u localhost 5060
+
+Then open the receiving file
+
+g++ -std=c++17 test.cpp -o test

@@ -133,19 +133,25 @@ int main(int argc, char *argv[])
     int ps=1024;
     int pps=2*1024;
     int wantedTime=5; // 5 seconds
-	int output_port=6001;
 	int input_port=6001;
-    while ((opt = getopt(argc, argv, "s:x:t:")) != -1) {
+	int output_port=6001;
+    while ((opt = getopt(argc, argv, "s:p:t:i:o")) != -1) {
         switch (opt) {
         case 's':
             ps = atoi(optarg);
             break;
-        case 'x':
+        case 'p':
             pps = atoi(optarg);
             break;
         case 't':
             wantedTime = atoi(optarg);
             break;
+		case 'i':
+			input_port=atoi(optarg);
+			break;
+		case 'o':
+			output_port=atoi(optarg);
+			break;
         default: /* '?' */
         show_usage:
             MLOGD<<"Usage: [-s=packet size in bytes] [-x=packets per second] [-t=time to run in seconds]\n";
@@ -155,7 +161,7 @@ int main(int argc, char *argv[])
 
     // For a packet size of 1024 bytes, 1024 packets per second equals 1 MB/s or 8 MBit/s
     // 8 MBit/s is a just enough for encoded 720p video
-	const Options options{ps,pps,pps*wantedTime};
+	const Options options{ps,pps,pps*wantedTime,input_port,output_port};
 	test_latency(options);
 
     return 0;

@@ -12,7 +12,6 @@
 #include <cmath>
 #include <iomanip>
 #include <assert.h>
-#include <wstring.h>
 
 class StringHelper{
 private:
@@ -66,8 +65,9 @@ public:
         if(digitsWholeNumberWithSign >= (maxLength - 1)){
             return std::to_wstring((int)value);
         }
-        const std::wstring valueAsStringWithDecimals=(std::wstringstream() << std::fixed << std::setprecision(wantedPrecisionAfterCome) << value).str();
-        return valueAsStringWithDecimals.substr(0,maxLength);
+        //const std::wstring valueAsStringWithDecimals=(std::wstringstream() << std::fixed << std::setprecision(wantedPrecisionAfterCome) << value).str();
+        const std::wstring valueAsStringWithDecimals=L"";
+		return valueAsStringWithDecimals.substr(0,maxLength);
     }
 
     static const void doubleToString(std::wstring& sBeforeCome,std::wstring& sAfterCome,double value,int maxLength,int maxResAfterCome){

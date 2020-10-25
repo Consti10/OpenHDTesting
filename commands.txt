@@ -7,3 +7,5 @@ cat newfile.txt | nc -u localhost 5060
 Then open the receiving file
 
 g++ -std=c++17 test.cpp -o test
+
+g++ -std=c++17 test.cpp UDPReceiver.cpp UDPSender.cpp -o test -lpthread

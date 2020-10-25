@@ -5,7 +5,7 @@
 #include <vector>
 #include <sstream>
 #include <array>
-#include <StringHelper.hpp>
+#include "StringHelper.hpp"
 
 #ifdef __ANDROID__
 #include <AndroidThreadPrioValues.hpp>

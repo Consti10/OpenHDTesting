@@ -95,7 +95,7 @@ void UDPReceiver::receiveFromUDPLoop() {
         //I do not think so. recvfrom should return as soon as new data arrived,not when the buffer is full
         //But with a bigger buffer we do not loose packets when the receiver thread cannot keep up for a short amount of time
         // MSG_WAITALL does not wait until we have __n data, but a new UDP packet (that can be smaller than __n)
-        const ssize_t message_length = recvfrom(mSocket,buff->data(),UDP_PACKET_MAX_SIZE, MSG_WAITALL,(sockaddr*)&source,&sourceLen);
+        const ssize_t message_length = recvfrom(mSocket,buff->data(),UDP_PACKET_MAX_SIZE, MSG_DONTWAIT ,(sockaddr*)&source,&sourceLen);
         //ssize_t message_length = recv(mSocket, buff, (size_t) mBuffsize, MSG_WAITALL);
         if (message_length > 0) { //else -1 was returned;timeout/No data received
             //LOGD("Data size %d",(int)message_length);

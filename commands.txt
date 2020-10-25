@@ -3,6 +3,14 @@ nc -u -l 5060 > newfile.txt
 
 Send file via udp
 cat newfile.txt | nc -u localhost 5060
+nc -u -l 6002 | nc -u "192.168.0.13" 6003
+
+Listen on localhost and forward to ground pi via ethernet
+nc -u -l 6002 | nc -u "192.168.0.13" 6003
+//
+Same but forward via svpcom
+
+
 
 Then open the receiving file
 

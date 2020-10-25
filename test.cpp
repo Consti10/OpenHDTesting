@@ -67,22 +67,16 @@ static void generateDataPackets(std::function<void(std::vector<uint8_t>&)> cb,co
     }
 }
 
-static void test_latency(){
-    // For a packet size of 1024 bytes, 1024 packets per second equals 1 MB/s or 8 MBit/s
-    // 8 MBit/s is a just enough for encoded 720p video
-    const int PACKET_SIZE=1024;
-    const int WANTED_PACKETS_PER_SECOND=2*1024;
-    const std::chrono::nanoseconds TIME_BETWEEN_PACKETS=std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::seconds(1))/WANTED_PACKETS_PER_SECOND;
-    const int N_PACKETS=WANTED_PACKETS_PER_SECOND*5;
+static void test_latency(const int PACKET_SIZE,const int WANTED_PACKETS_PER_SECOND,const int N_PACKETS){
 
     // start the receiver in its own thread
-    UDPReceiver udpReceiver{nullptr,6003,"LTUdpRec",0,validateReceivedData,0};
+    UDPReceiver udpReceiver{nullptr,6002,"LTUdpRec",0,validateReceivedData,0};
     udpReceiver.startReceiving();
     // Wait a bit such that the OS can start the receiver before we start sending data
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
-    //UDPSender udpSender{"127.0.0.1",6002};
-	UDPSender udpSender{"192.168.0.14",6002};
+    UDPSender udpSender{"127.0.0.1",6002};
+	//UDPSender udpSender{"192.168.0.14",6002};
     currentSequenceNumber=0;
     avgUDPProcessingTime.reset();
 
@@ -126,8 +120,31 @@ static void test_latency(){
 
 int main(int argc, char *argv[])
 {
-    
-	test_latency();
+	 int opt;
+    int ps=1024;
+    int pps=2*1024;
+    int wantedTime=5; // 5 seconds
+    while ((opt = getopt(argc, argv, "PS:PPS:T:")) != -1) {
+        switch (opt) {
+        case 'PS':
+            ps = atoi(optarg);
+            break;
+        case 'PPS':
+            pps = atoi(optarg);
+            break;
+        case 'T':
+            wantedTime = atoi(optarg);
+            break;
+        default: /* '?' */
+        show_usage:
+            MLOGD<<"Usage: [-PS=packet size in bytes] [-PPS=packets per second] [-T=time to run in seconds]\n";
+            return 1;
+        }
+    }
+	
+    // For a packet size of 1024 bytes, 1024 packets per second equals 1 MB/s or 8 MBit/s
+    // 8 MBit/s is a just enough for encoded 720p video
+	test_latency(ps,pps,wantedTime*pps);
  
     return 0;
 }

@@ -7,7 +7,7 @@
 #include <atomic>
 #include <mutex>
  
- static void fillBufferWithRandomData(std::vector<uint8_t>& data){
+static void fillBufferWithRandomData(std::vector<uint8_t>& data){
     const std::size_t size=data.size();
     for(std::size_t i=0;i<size;i++){
         data[i] = rand() % 255;
@@ -64,7 +64,7 @@ struct Options{
     const int N_PACKETS=WANTED_PACKETS_PER_SECOND*5;
     const int INPUT_PORT=6001;
     const int OUTPUT_PORT=6001;
-	// Default to localhost, or use airpi IP for wfb testing if airpi is in same network with ground pi
+	// Default to localhost
 	const std::string DESTINATION_IP="127.0.0.1";
 };
 
@@ -146,7 +146,7 @@ static void test_latency(const Options& o){
             sentDataSave.mMutex.unlock();
         }
 		//write sequence number and timestamp after random data was created
-		//(We are not interested in the latency of creating random data,even thouth it is really fast)
+		//(We are not interested in the latency of creating random data,even thouth it is really fas)
         writeSequenceNumberAndTimestamp(*buff);
         udpSender.mySendTo(buff->data(),buff->size());
         writtenBytes+=o.PACKET_SIZE;
@@ -208,10 +208,10 @@ int main(int argc, char *argv[])
 		//	break;
 		case 'm':
 			mode=atoi(optarg);
-			break;	
+			break;
         default: /* '?' */
         show_usage:
-            MLOGD<<"Usage: [-s=packet size in bytes] [-p=packets per second] [-t=time to run in seconds]" 
+            MLOGD<<"Usage: [-s=packet size in bytes] [-p=packets per second] [-t=time to run in seconds]"
 			//<<"[-i=input udp port] [-o=output udp port]"
 			<<" [-m= mode 0 for sendto localhost else airpi]\n";
             return 1;

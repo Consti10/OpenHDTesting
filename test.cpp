@@ -71,18 +71,21 @@ struct Options{
     const int N_PACKETS=WANTED_PACKETS_PER_SECOND*5;
     const int INPUT_PORT=6001;
     const int OUTPUT_PORT=6001;
+	// Default to localhost, or use airpi IP for wfb testing if airpi is in same network with ground pi
+	const std::string DESTINATION_IP="127.0.0.1"; 
 };
 
 
 static void test_latency(const Options& o){
 	const std::chrono::nanoseconds TIME_BETWEEN_PACKETS=std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::seconds(1))/o.WANTED_PACKETS_PER_SECOND;
     // start the receiver in its own thread
+	// Listening always happens on localhost
     UDPReceiver udpReceiver{nullptr,o.INPUT_PORT,"LTUdpRec",0,validateReceivedData,0};
     udpReceiver.startReceiving();
     // Wait a bit such that the OS can start the receiver before we start sending data
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
-    UDPSender udpSender{"127.0.0.1",o.OUTPUT_PORT};
+    UDPSender udpSender{o.DESTINATION_IP,o.OUTPUT_PORT};
 	//UDPSender udpSender{"192.168.0.14",6002};
     currentSequenceNumber=0;
     avgUDPProcessingTime.reset();

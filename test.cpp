@@ -85,8 +85,7 @@ static void test_latency(const Options& o){
     // Wait a bit such that the OS can start the receiver before we start sending data
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
-    //UDPSender udpSender{o.DESTINATION_IP,o.OUTPUT_PORT};
-	UDPSender udpSender{"192.168.0.14",6002};
+    UDPSender udpSender{o.DESTINATION_IP,o.OUTPUT_PORT};
     currentSequenceNumber=0;
     avgUDPProcessingTime.reset();
 
@@ -166,7 +165,7 @@ int main(int argc, char *argv[])
 
     // For a packet size of 1024 bytes, 1024 packets per second equals 1 MB/s or 8 MBit/s
     // 8 MBit/s is a just enough for encoded 720p video
-	const Options options{ps,pps,pps*wantedTime,input_port,output_port};
+	const Options options{ps,pps,pps*wantedTime,input_port,output_port,"192.168.0.14"};
 	test_latency(options);
 
     return 0;

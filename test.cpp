@@ -146,7 +146,7 @@ static void test_latency(const Options& o){
             sentDataSave.mMutex.unlock();
         }
 		//write sequence number and timestamp after random data was created
-		//(We are not interested in the latency of creating random data,even thouth it is really fas)
+		//(We are not interested in the latency of creating random data,even thouth it is really fast)
         writeSequenceNumberAndTimestamp(*buff);
         udpSender.mySendTo(buff->data(),buff->size());
         writtenBytes+=o.PACKET_SIZE;
@@ -200,24 +200,28 @@ int main(int argc, char *argv[])
         case 't':
             wantedTime = atoi(optarg);
             break;
-		case 'i':
-			input_port=atoi(optarg);
-			break;
-		case 'o':
-			output_port=atoi(optarg);
-			break;
+		//case 'i':
+		//	input_port=atoi(optarg);
+		//	break;
+		//case 'o':
+		//	output_port=atoi(optarg);
+		//	break;
 		case 'm':
 			mode=atoi(optarg);
 			break;	
         default: /* '?' */
         show_usage:
             MLOGD<<"Usage: [-s=packet size in bytes] [-p=packets per second] [-t=time to run in seconds]" 
-			<<"[-i=input udp port] [-o=output udp port] [-m= mode 0 for sendto localhost else airpi]\n";
+			//<<"[-i=input udp port] [-o=output udp port]"
+			<<" [-m= mode 0 for sendto localhost else airpi]\n";
             return 1;
         }
     }
-	const Options options0{ps,pps,pps*wantedTime,input_port,output_port,"127.0.0.1"};
-	const Options options1{ps,pps,pps*wantedTime,input_port,output_port,"192.168.0.14"};
+	// Mode test localhost
+	const Options options0{ps,pps,pps*wantedTime,6001,6001,"127.0.0.1"};
+	// Mode test wfb latency, data goes out port 6002 to air pi where it is transmitted via wb
+	// On the ground it it received via wb and forwarded to port 6001
+	const Options options1{ps,pps,pps*wantedTime,6001,6002,"192.168.0.14"};
 	const Options options = (mode==0) ? options0 : options1;
 
     // For a packet size of 1024 bytes, 1024 packets per second equals 1 MB/s or 8 MBit/s

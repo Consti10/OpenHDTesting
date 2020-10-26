@@ -210,7 +210,8 @@ int main(int argc, char *argv[])
 			break;	
         default: /* '?' */
         show_usage:
-            MLOGD<<"Usage: [-s=packet size in bytes] [-p=packets per second] [-t=time to run in seconds] [-i=input udp port] [-o=output udp port]\n";
+            MLOGD<<"Usage: [-s=packet size in bytes] [-p=packets per second] [-t=time to run in seconds]" 
+			<<"[-i=input udp port] [-o=output udp port] [-m= mode 0 for sendto localhost else airpi]\n";
             return 1;
         }
     }

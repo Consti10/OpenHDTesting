@@ -96,6 +96,8 @@ static void test_latency(const Options& o){
     std::size_t writtenPackets=0;
     for(int i=0;i<o.N_PACKETS;i++){
         auto buff=createRandomDataBuffer(o.PACKET_SIZE);
+		//write sequence number and timestamp after random data was created 
+		//(We are not interested in the latency of creating random data,even thouth it is really fas)
         writeSequenceNumberAndTimestamp(buff);
         udpSender.mySendTo(buff.data(),buff.size());
 		//std::this_thread::sleep_for(std::chrono::microseconds(1));

@@ -4,6 +4,7 @@
 #include "UDPSender.h"
 #include "UDPReceiver.h"
 #include <cstring>
+#include <atomic>
  
  static void fillBufferWithRandomData(std::vector<uint8_t>& data){
     const std::size_t size=data.size();
@@ -65,9 +66,6 @@ struct Options{
 	// Default to localhost, or use airpi IP for wfb testing if airpi is in same network with ground pi
 	const std::string DESTINATION_IP="127.0.0.1";
 };
-
-#include <UDPSender.h>
-#include <atomic>
 
 // Use this to validate received data (mutex for thread safety)
 struct SentDataSave{

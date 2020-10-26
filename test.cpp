@@ -212,7 +212,7 @@ int main(int argc, char *argv[])
 
     // For a packet size of 1024 bytes, 1024 packets per second equals 1 MB/s or 8 MBit/s
     // 8 MBit/s is a just enough for encoded 720p video
-	const Options options{ps,pps,pps*wantedTime,input_port,output_port,"192.168.0.14"};
+	const Options options{ps,pps,pps*wantedTime,input_port,output_port};
 	MLOGD<<"Selected input: "<<options.INPUT_PORT<<"\n";
 	MLOGD<<"Selected output: "<<options.DESTINATION_IP<<" OUTPUT_PORT"<<options.OUTPUT_PORT<<"\n";
 	test_latency(options);

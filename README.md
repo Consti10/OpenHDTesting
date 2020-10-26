@@ -3,7 +3,7 @@ g++ -std=c++17 test.cpp UDPReceiver.cpp UDPSender.cpp -o test -lpthread
 
 Collection of commands:
 git add . && git commit -m "X" && git push
-git reset --hard origin/master
+git reset --hard && git pull
 
 Receive via udp and write to file
 nc -u -l 5060 > newfile.txt

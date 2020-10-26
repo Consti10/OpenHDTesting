@@ -18,6 +18,12 @@ std::vector<uint8_t> createRandomDataBuffer(const ssize_t sizeBytes){
   fillBufferWithRandomData(buf);
   return buf;
 }
+// same as above but return shared ptr
+std::shared_ptr<std::vector<uint8_t>> createRandomDataBuffer2(const ssize_t sizeBytes){
+  auto buf=std::make_shared<std::vector<uint8_t>>(sizeBytes);
+  fillBufferWithRandomData(*buf);
+  return buf;
+}
 
 struct PacketInfoData{
     uint32_t seqNr;
@@ -41,11 +47,40 @@ PacketInfoData getSequenceNumberAndTimestamp(const std::vector<uint8_t>& data){
     return packetInfoData;
 }
 
+// Returns true if everyhting except the first couble of bytes (PacketInfoData) match
+bool compareSentAndReceivedPacket(const std::vector<uint8_t>& sb,const std::vector<uint8_t>& rb){
+    if(sb.size()!=rb.size()){
+        return false;
+    }
+    const int result=memcmp (&sb.data()[sizeof(PacketInfoData)],&rb.data()[sizeof(PacketInfoData)],sb.size()-sizeof(PacketInfoData));
+    return result==0;
+}
+
+struct Options{
+    const int PACKET_SIZE=1024;
+    const int WANTED_PACKETS_PER_SECOND=1024;
+    const int N_PACKETS=WANTED_PACKETS_PER_SECOND*5;
+    const int INPUT_PORT=6001;
+    const int OUTPUT_PORT=6001;
+	// Default to localhost, or use airpi IP for wfb testing if airpi is in same network with ground pi
+	const std::string DESTINATION_IP="127.0.0.1";
+};
+
+#include <UDPSender.h>
+#include <atomic>
+
+// Use this to validate received data (mutex for thread safety)
+struct SentDataSave{
+    std::vector<std::shared_ptr<std::vector<uint8_t>>> sentPackets;
+    std::mutex mMutex;
+};
+SentDataSave sentDataSave{};
 //AvgCalculator2 avgUDPProcessingTime{1024*1024};
 AvgCalculator avgUDPProcessingTime;
+std::uint32_t lastReceivedSequenceNr=0;
 
 static void validateReceivedData(const uint8_t* dataP,size_t data_length){
-    auto data=std::vector<uint8_t>(dataP,dataP+data_length);
+    const auto data=std::vector<uint8_t>(dataP,dataP+data_length);
     const auto info=getSequenceNumberAndTimestamp(data);
     const auto latency=std::chrono::steady_clock::now()-info.timestamp;
 	if(latency>std::chrono::milliseconds(1)){
@@ -56,25 +91,32 @@ static void validateReceivedData(const uint8_t* dataP,size_t data_length){
     //if(info.seqNr>10){
         avgUDPProcessingTime.add(latency);
     //}
-}
-
-static void generateDataPackets(std::function<void(std::vector<uint8_t>&)> cb,const int N_PACKETS,const int PACKET_SIZE,const int PACKETS_PER_SECOND){
-    for(int i=0;i<N_PACKETS;i++){
-        auto packet=createRandomDataBuffer(PACKET_SIZE);
-        cb(packet);
+    if(lastReceivedSequenceNr!=0){
+        const auto delta=info.seqNr-lastReceivedSequenceNr;
+        if(delta!=1){
+            MLOGD<<"Missing a packet though FEC "<<delta;
+        }
+    }
+    lastReceivedSequenceNr=info.seqNr;
+    if(true){
+       sentDataSave.mMutex.lock();
+       if((info.seqNr<sentDataSave.sentPackets.size()) && sentDataSave.sentPackets.at(info.seqNr)!=nullptr){
+           const auto originalPacketData=sentDataSave.sentPackets.at(info.seqNr);
+           if(!compareSentAndReceivedPacket(*originalPacketData,data)){
+                //Also this should never happen !
+                MLOGE<<"Packets do not match !"<<"\n";
+           }else{
+                //MLOGD<<"Packets do match"<<"\n";
+           }
+           // Free memory such that we do not run out of RAM (once received,we do not need the packet a second time)
+           //originalPacketData.at(info.seqNr)->reset();
+       }else{
+            // Should never happen
+            MLOGE<<"Got probably invalid seqNr "<<info.seqNr<<" "<<sentDataSave.sentPackets.size()<<"\n";
+       }
+       sentDataSave.mMutex.unlock();
     }
 }
-
-struct Options{
-    const int PACKET_SIZE=1024;
-    const int WANTED_PACKETS_PER_SECOND=1024;
-    const int N_PACKETS=WANTED_PACKETS_PER_SECOND*5;
-    const int INPUT_PORT=6001;
-    const int OUTPUT_PORT=6001;
-	// Default to localhost, or use airpi IP for wfb testing if airpi is in same network with ground pi
-	const std::string DESTINATION_IP="127.0.0.1"; 
-};
-
 
 static void test_latency(const Options& o){
 	const std::chrono::nanoseconds TIME_BETWEEN_PACKETS=std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::seconds(1))/o.WANTED_PACKETS_PER_SECOND;
@@ -88,19 +130,25 @@ static void test_latency(const Options& o){
     UDPSender udpSender{o.DESTINATION_IP,o.OUTPUT_PORT};
     currentSequenceNumber=0;
     avgUDPProcessingTime.reset();
+    sentDataSave.sentPackets.clear();
+    //
 
     const std::chrono::steady_clock::time_point testBegin=std::chrono::steady_clock::now();
     std::chrono::steady_clock::time_point firstPacketTimePoint=std::chrono::steady_clock::now();
     std:size_t writtenBytes=0;
     std::size_t writtenPackets=0;
     for(int i=0;i<o.N_PACKETS;i++){
-        auto buff=createRandomDataBuffer(o.PACKET_SIZE);
-		//write sequence number and timestamp after random data was created 
+        auto buff=createRandomDataBuffer2(o.PACKET_SIZE);
+        // If enabled,store sent data for later validation
+        if(true){
+            sentDataSave.mMutex.lock();
+            sentDataSave.sentPackets.push_back(buff);
+            sentDataSave.mMutex.unlock();
+        }
+		//write sequence number and timestamp after random data was created
 		//(We are not interested in the latency of creating random data,even thouth it is really fas)
-        writeSequenceNumberAndTimestamp(buff);
-        udpSender.mySendTo(buff.data(),buff.size());
-		//std::this_thread::sleep_for(std::chrono::microseconds(1));
-		//validateReceivedData(buff.data(),buff.size());
+        writeSequenceNumberAndTimestamp(*buff);
+        udpSender.mySendTo(buff->data(),buff->size());
         writtenBytes+=o.PACKET_SIZE;
         writtenPackets+=1;
         currentSequenceNumber++;
@@ -132,7 +180,7 @@ static void test_latency(const Options& o){
 int main(int argc, char *argv[])
 {
 	// For testing the localhost latency just use the same udp port for input and output
-	// For testing wb latency TODO
+	// Else you have to use different udp ports and run svpcom wfb_tx and rx accordingly
 	int opt;
     int ps=1024;
     int pps=2*1024;

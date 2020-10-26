@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
     int wantedTime=5; // 5 seconds
 	int input_port=6001;
 	int output_port=6001;
-    while ((opt = getopt(argc, argv, "s:p:t:i:o")) != -1) {
+    while ((opt = getopt(argc, argv, "s:p:t:i:o:")) != -1) {
         switch (opt) {
         case 's':
             ps = atoi(optarg);

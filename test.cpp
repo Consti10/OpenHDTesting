@@ -85,8 +85,8 @@ static void test_latency(const Options& o){
     // Wait a bit such that the OS can start the receiver before we start sending data
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
-    UDPSender udpSender{o.DESTINATION_IP,o.OUTPUT_PORT};
-	//UDPSender udpSender{"192.168.0.14",6002};
+    //UDPSender udpSender{o.DESTINATION_IP,o.OUTPUT_PORT};
+	UDPSender udpSender{"192.168.0.14",6002};
     currentSequenceNumber=0;
     avgUDPProcessingTime.reset();
 

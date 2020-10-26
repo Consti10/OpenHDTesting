@@ -97,7 +97,7 @@ static void validateReceivedData(const uint8_t* dataP,size_t data_length){
         }
     }
     lastReceivedSequenceNr=info.seqNr;
-    if(true){
+    if(false){
        sentDataSave.mMutex.lock();
        if((info.seqNr<sentDataSave.sentPackets.size()) && sentDataSave.sentPackets.at(info.seqNr)!=nullptr){
            const auto originalPacketData=sentDataSave.sentPackets.at(info.seqNr);
@@ -139,7 +139,7 @@ static void test_latency(const Options& o){
     for(int i=0;i<o.N_PACKETS;i++){
         auto buff=createRandomDataBuffer2(o.PACKET_SIZE);
         // If enabled,store sent data for later validation
-        if(true){
+        if(false){
             sentDataSave.mMutex.lock();
             sentDataSave.sentPackets.push_back(buff);
             sentDataSave.mMutex.unlock();

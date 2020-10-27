@@ -242,7 +242,7 @@ public:
         std::stringstream ss;
         ss<<"One Percent low:\n";
         ss<<MyTimeHelper::timeSamplesAsString(onePercentLow);
-        ss<<"\nOne Percent high:";
+        ss<<"\nOne Percent high:\n";
         ss<<MyTimeHelper::timeSamplesAsString(onePercentHigh);
         return ss.str();
     }

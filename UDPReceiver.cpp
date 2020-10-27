@@ -45,6 +45,7 @@ void UDPReceiver::stopReceiving() {
         mUDPReceiverThread->join();
     }
     mUDPReceiverThread.reset();
+	MLOGD<<"UDPReceiver avgDeltaBetweenPackets "<<avgDeltaBetweenPackets.getAvgReadable()<<"\n";
 }
 
 void UDPReceiver::receiveFromUDPLoop() {
@@ -99,8 +100,10 @@ void UDPReceiver::receiveFromUDPLoop() {
         //ssize_t message_length = recv(mSocket, buff, (size_t) mBuffsize, MSG_WAITALL);
         if (message_length > 0) { //else -1 was returned;timeout/No data received
 			if(lastReceivedPacket==std::chrono::steady_clock::time_point{}){
-				
+				const auto delta=std::chrono::steady_clock::now()-lastReceivedPacket;
+				avgDeltaBetweenPackets.add(delta);
 			}
+			lastReceivedPacket=std::chrono::steady_clock::now();
             //LOGD("Data size %d",(int)message_length);
             onDataReceivedCallback(buff->data(), (size_t)message_length);
 

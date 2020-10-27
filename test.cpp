@@ -186,6 +186,8 @@ static void test_latency(const Options& o){
     const double testTimeSeconds=(testEnd-testBegin).count()/1000.0f/1000.0f/1000.0f;
     const double actualPacketsPerSecond=(double)o.N_PACKETS/testTimeSeconds;
     const double actualMBytesPerSecond=(double)writtenBytes/testTimeSeconds/1024.0f/1024;
+	const int nLostBytes=(writtenBytes-receivedBytes);
+    const float lostBytesPercentage=((float)receivedBytes/(float)writtenBytes)*100.0f;
 
    // Wait for any packet that might be still in transit
    std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -195,8 +197,6 @@ static void test_latency(const Options& o){
    MLOGD<<"Testing took:"<<testTimeSeconds<<"\n";
    MLOGD<<"WANTED_PACKETS_PER_SECOND "<<o.WANTED_PACKETS_PER_SECOND<<" Got "<<actualPacketsPerSecond<<
    "\nBITRATE: "<<actualMBytesPerSecond<<" MB/s"<<" ("<<(actualMBytesPerSecond*8)<<"MBit/s)"<<"\n";
-   const int nLostBytes=(writtenBytes-receivedBytes);
-   const float lostBytesPercentage=((float)receivedBytes/(float)writtenBytes)*100.0f;
    MLOGD<<"N of bytes sent | rec | diff | perc lost ["<<writtenBytes<<" | "<<receivedBytes
    <<" | "<<nLostBytes<<" | "<<lostBytesPercentage<<"]\n";
 

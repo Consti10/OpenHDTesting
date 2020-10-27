@@ -122,7 +122,7 @@ static void test_latency(const Options& o){
 	const std::chrono::nanoseconds TIME_BETWEEN_PACKETS=std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::seconds(1))/o.WANTED_PACKETS_PER_SECOND;
     // start the receiver in its own thread
 	// Listening always happens on localhost
-    UDPReceiver udpReceiver{nullptr,o.INPUT_PORT,"LTUdpRec",0,validateReceivedData,0,false};
+    UDPReceiver udpReceiver{nullptr,o.INPUT_PORT,"LTUdpRec",0,validateReceivedData,0,true};
     udpReceiver.startReceiving();
     // Wait a bit such that the OS can start the receiver before we start sending data
     std::this_thread::sleep_for(std::chrono::milliseconds(10));

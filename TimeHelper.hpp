@@ -244,6 +244,7 @@ public:
         ss<<MyTimeHelper::timeSamplesAsString(onePercentLow);
         ss<<"\nOne Percent high:\n";
         ss<<MyTimeHelper::timeSamplesAsString(onePercentHigh);
+		ss<<"\n";
         return ss.str();
     }
 };

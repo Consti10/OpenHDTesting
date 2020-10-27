@@ -173,7 +173,7 @@ static void test_latency(const Options& o){
    MLOGD<<"WANTED_PACKETS_PER_SECOND "<<o.WANTED_PACKETS_PER_SECOND<<" Got "<<actualPacketsPerSecond<<
    " achieved bitrate: "<<actualMBytesPerSecond<<" MB/s"<<"\n";
 
-   MLOGD<<"Avg UDP processing time "<<avgUDPProcessingTime.getAvgReadable()<<"\n";
+   MLOGD<<"Avg UDP latency between (I<=>O)"<<avgUDPProcessingTime.getAvgReadable()<<"\n";
    //MLOGD<<"All samples "<<avgUDPProcessingTime.getAllSamplesAsString();
 }
 

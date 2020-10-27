@@ -119,7 +119,7 @@ void UDPReceiver::receiveFromUDPLoop() {
             }
         }else{
             if(errno != EWOULDBLOCK) {
-                MLOGE<<"Error on recvfrom. errno="<<errno<<" "<<strerror(errno);
+                //MLOGE<<"Error on recvfrom. errno="<<errno<<" "<<strerror(errno);
             }
         }
     }

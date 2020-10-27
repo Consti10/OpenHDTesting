@@ -98,7 +98,7 @@ void UDPReceiver::receiveFromUDPLoop() {
         //I do not think so. recvfrom should return as soon as new data arrived,not when the buffer is full
         //But with a bigger buffer we do not loose packets when the receiver thread cannot keep up for a short amount of time
         // MSG_WAITALL does not wait until we have __n data, but a new UDP packet (that can be smaller than __n)
-        //NOTE: NONBLOCKING hogs a whole CPU core !
+        //NOTE: NONBLOCKING hogs a whole CPU core ! do not use whenever possible !
 		ssize_t tmp;
 		if(ENABLE_NONBLOCKING){
 			tmp = recvfrom(mSocket,buff->data(),UDP_PACKET_MAX_SIZE, MSG_DONTWAIT,(sockaddr*)&source,&sourceLen);

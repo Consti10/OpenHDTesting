@@ -6,7 +6,14 @@
 #include <cstring>
 #include <atomic>
 #include <mutex>
- 
+
+static void printCurrentThreadPriority(const std::string name){
+	int which = PRIO_PROCESS;
+    id_t pid = (id_t)getpid();
+    int priority= getpriority(which, pid);
+	MLOGD<<name<<" has priority "<<priority<<"\n";
+}
+	
 static void fillBufferWithRandomData(std::vector<uint8_t>& data){
     const std::size_t size=data.size();
     for(std::size_t i=0;i<size;i++){
@@ -119,6 +126,8 @@ static void validateReceivedData(const uint8_t* dataP,size_t data_length){
 }
 
 static void test_latency(const Options& o){
+	printCurrentThreadPriority("TEST_MAIN");
+	
 	const std::chrono::nanoseconds TIME_BETWEEN_PACKETS=std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::seconds(1))/o.WANTED_PACKETS_PER_SECOND;
     // start the receiver in its own thread
 	// Listening always happens on localhost

@@ -13,6 +13,16 @@
 #include <NDKThreadHelper.hpp>
 #endif
 
+#include <sys/time.h>
+#include <sys/resource.h>
+
+static void printCurrentThreadPriority(const std::string name){
+	int which = PRIO_PROCESS;
+    id_t pid = (id_t)getpid();
+    int priority= getpriority(which, pid);
+	MLOGD<<name<<" has priority "<<priority<<"\n";
+}
+
 UDPReceiver::UDPReceiver(JavaVM* javaVm,int port,std::string name,int CPUPriority,DATA_CALLBACK  onDataReceivedCallback,
 size_t WANTED_RCVBUF_SIZE,const bool ENABLE_NONBLOCKING):
         mPort(port),mName(std::move(name)),WANTED_RCVBUF_SIZE(WANTED_RCVBUF_SIZE),mCPUPriority(CPUPriority),onDataReceivedCallback(std::move(onDataReceivedCallback))
@@ -51,6 +61,7 @@ void UDPReceiver::stopReceiving() {
 }
 
 void UDPReceiver::receiveFromUDPLoop() {
+	printCurrentThreadPriority("TEST_UDP_RECCEIVER");
     mSocket=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if (mSocket == -1) {
         MLOGD<<"Error creating socket";

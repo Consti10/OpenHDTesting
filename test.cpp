@@ -183,7 +183,7 @@ static void test_latency(const Options& o){
 
    MLOGD<<"Testing took:"<<testTimeSeconds<<"\n";
    MLOGD<<"WANTED_PACKETS_PER_SECOND "<<o.WANTED_PACKETS_PER_SECOND<<" Got "<<actualPacketsPerSecond<<
-   " achieved bitrate: "<<actualMBytesPerSecond<<" MB/s"<<"\n";
+   "\nachieved bitrate: "<<actualMBytesPerSecond<<" MB/s"<<" ("<<actualMBytesPerSecond*8)<<"MBit/s)"<<"\n";
 
    MLOGD<<"Avg UDP latency between (I<=>O)"<<avgUDPProcessingTime.getAvgReadable()<<"\n";
    //MLOGD<<"All samples "<<avgUDPProcessingTime.getAllSamplesSortedAsString()<<"\n";
@@ -233,8 +233,8 @@ int main(int argc, char *argv[])
     }
 	// Mode test localhost
 	const Options options0{ps,pps,pps*wantedTime,6001,6001,"127.0.0.1"};
-	// Mode test wfb latency, data goes out port 6002 to air pi where it is transmitted via wb
-	// On the ground it is received via wb and forwarded to port 6001
+	// Mode test wfb latency, data goes out port 6002 to air pi where it is received and transmitted via wb
+	// On the ground data is received via wb and forwarded to port 6001
 	const Options options1{ps,pps,pps*wantedTime,6001,6002,"192.168.0.14"};
 	const Options options = (mode==0) ? options0 : options1;
 

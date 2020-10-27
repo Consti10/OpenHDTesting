@@ -10,6 +10,7 @@
 #include <thread>
 #include <atomic>
 #include <functional>
+#include <chrono>
 //
 #ifdef __ANDROID__
 #include <jni.h>
@@ -69,6 +70,7 @@ private:
     //65,507 bytes (65,535 − 8 byte UDP header − 20 byte IP header).
     static constexpr const size_t UDP_PACKET_MAX_SIZE=65507;
     JavaVM* javaVm;
+	std::chrono::steady_clock::time_point lastReceivedPacket{};
 };
 
 #endif // FPV_VR_UDPRECEIVER_H

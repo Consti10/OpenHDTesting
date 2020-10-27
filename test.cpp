@@ -96,7 +96,7 @@ AvgCalculator2 avgUDPProcessingTime{0};
 std::uint32_t lastReceivedSequenceNr=0;
 const bool COMPARE_RECEIVED_DATA=false;
 std::vector<int> lostPacketsSeqNrDiffs;
-std::size_t receivedDataCount=0;
+std::size_t receivedBytes=0;
 
 static void validateReceivedData(const uint8_t* dataP,size_t data_length){
 	receivedDataCount+=data_length;
@@ -195,7 +195,10 @@ static void test_latency(const Options& o){
    MLOGD<<"Testing took:"<<testTimeSeconds<<"\n";
    MLOGD<<"WANTED_PACKETS_PER_SECOND "<<o.WANTED_PACKETS_PER_SECOND<<" Got "<<actualPacketsPerSecond<<
    "\nBITRATE: "<<actualMBytesPerSecond<<" MB/s"<<" ("<<(actualMBytesPerSecond*8)<<"MBit/s)"<<"\n";
-   MLOGD<<"N of bytes sent | rec | diff "<<writtenBytes<<" | "<<receivedDataCount<<" | "<<(writtenBytes-receivedDataCount)<<"\n";
+   const int nLostBytes=(writtenBytes-receivedBytes);
+   const float lostBytesPercentage=((float)receivedBytes/(float)writtenBytes);
+   MLOGD<<"N of bytes sent | rec | diff | perc lost ["<<writtenBytes<<" | "<<receivedBytes
+   <<" | "<<nLostBytes<<" | "<<lostBytesPercentage<<"]\n";
 
    MLOGD<<"Avg UDP latency between (I<=>O)"<<avgUDPProcessingTime.getAvgReadable()<<"\n";
    MLOGD<<"LostPacketsSeqNrDiffs "<<vecAsString(lostPacketsSeqNrDiffs)<<"\n";

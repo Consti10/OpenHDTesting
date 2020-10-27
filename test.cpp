@@ -12,7 +12,7 @@
 static std::string vecAsString(const std::vector<int>& vec){
 	std::stringstream ss;
 	for(const auto v:vec){
-		ss<<v<<"";
+		ss<<v<<",";
 	}
 	return ss.str();
 }

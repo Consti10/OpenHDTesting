@@ -11,6 +11,7 @@
 #include <atomic>
 #include <functional>
 #include <chrono>
+#include "TimeHelper.hpp"
 //
 #ifdef __ANDROID__
 #include <jni.h>
@@ -71,6 +72,7 @@ private:
     static constexpr const size_t UDP_PACKET_MAX_SIZE=65507;
     JavaVM* javaVm;
 	std::chrono::steady_clock::time_point lastReceivedPacket{};
+	AvgCalculator avgDeltaBetweenPackets;
 };
 
 #endif // FPV_VR_UDPRECEIVER_H

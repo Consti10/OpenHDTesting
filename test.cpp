@@ -76,7 +76,7 @@ bool compareSentAndReceivedPacket(const std::vector<uint8_t>& sb,const std::vect
 }
 
 struct Options{
-    const int PACKET_SIZE=1024;
+    const int PACKET_SIZE=1466;
     const int WANTED_PACKETS_PER_SECOND=1024;
     const int N_PACKETS=WANTED_PACKETS_PER_SECOND*5;
     const int INPUT_PORT=6001;

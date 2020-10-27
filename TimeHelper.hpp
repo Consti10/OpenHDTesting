@@ -38,6 +38,19 @@ namespace MyTimeHelper{
     static std::string ReadableNS(uint64_t nanoseconds){
         return R(std::chrono::nanoseconds(nanoseconds));
     }
+	static std::string timeSamplesAsString(const std::vector<std::chrono::nanoseconds>& samples){
+		std::stringstream ss;
+		int counter=0;
+        for(const auto& sample:samples){
+           ss<<","<<MyTimeHelper::R(sample);
+		   counter++;
+		   if(counter%10==0){
+		     ss<<"\n";
+		   }
+        }
+		return ss.str();
+	}
+}
 };
 
 // Use this class to compare many samples of the same kind
@@ -151,7 +164,6 @@ using AvgCalculator=BaseAvgCalculator<std::chrono::nanoseconds>;
 using AvgCalculatorSize=BaseAvgCalculator<std::size_t>;
 
 
-
 // Instead of storing only the min, max and average this stores
 // The last n samples in a queue. However, this makes calculating the min/max/avg values much more expensive
 // And therefore should only be used with a small sample size.
@@ -220,28 +232,19 @@ public:
     }
     std::string getAllSamplesSortedAsString(){
         const auto valuesSorted=getSamplesSorted();
-        std::stringstream ss;
-        for(const auto& sample:valuesSorted){
-           ss<<" "<<MyTimeHelper::R(sample);
-        }
-        return ss.str();
+        return MyTimeHelper::timeSamplesAsString(valuesSorted);
     }
-	std::string getOnePercentLowHigh(){
+    std::string getOnePercentLowHigh(){
         auto valuesSorted=getSamplesSorted();
         const auto sizeOnePercent=valuesSorted.size()/100;
         const auto onePercentLow=std::vector<std::chrono::nanoseconds>(valuesSorted.begin(),valuesSorted.begin()+sizeOnePercent);
         const auto tmpBegin=valuesSorted.begin()+valuesSorted.size()-sizeOnePercent;
         const auto onePercentHigh=std::vector<std::chrono::nanoseconds>(tmpBegin,valuesSorted.end());
         std::stringstream ss;
-        ss<<"One Percent low:";
-        for(const auto& sample:onePercentLow){
-           ss<<" "<<MyTimeHelper::R(sample);
-        }
+        ss<<"One Percent low:\n";
+        ss<<MyTimeHelper::timeSamplesAsString(onePercentLow);
         ss<<"\nOne Percent high:";
-        for(const auto& sample:onePercentHigh){
-           ss<<" "<<MyTimeHelper::R(sample);
-        }
-        ss<<"\n";
+        ss<<MyTimeHelper::timeSamplesAsString(onePercentHigh);
         return ss.str();
     }
 };

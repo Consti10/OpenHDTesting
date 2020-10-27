@@ -99,7 +99,7 @@ void UDPReceiver::receiveFromUDPLoop() {
         const ssize_t message_length = recvfrom(mSocket,buff->data(),UDP_PACKET_MAX_SIZE, MSG_WAITALL,(sockaddr*)&source,&sourceLen);
         //ssize_t message_length = recv(mSocket, buff, (size_t) mBuffsize, MSG_WAITALL);
         if (message_length > 0) { //else -1 was returned;timeout/No data received
-			if(lastReceivedPacket==std::chrono::steady_clock::time_point{}){
+			if(lastReceivedPacket!=std::chrono::steady_clock::time_point{}){
 				const auto delta=std::chrono::steady_clock::now()-lastReceivedPacket;
 				avgDeltaBetweenPackets.add(delta);
 			}

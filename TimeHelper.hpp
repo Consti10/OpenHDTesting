@@ -50,7 +50,6 @@ namespace MyTimeHelper{
         }
 		return ss.str();
 	}
-}
 };
 
 // Use this class to compare many samples of the same kind

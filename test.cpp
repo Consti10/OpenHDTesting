@@ -6,6 +6,9 @@
 #include <cstring>
 #include <atomic>
 #include <mutex>
+#include <sys/time.h>
+#include <sys/resource.h>
+
 
 static void printCurrentThreadPriority(const std::string name){
 	int which = PRIO_PROCESS;

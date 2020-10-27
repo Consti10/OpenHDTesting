@@ -9,6 +9,13 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 
+static std::string vecAsString(const std::vector<int>& vec){
+	std::stringstream ss;
+	for(const auto v:vec){
+		ss<<v<<"";
+	}
+	return ss.str();
+}
 
 static void printCurrentThreadPriority(const std::string name){
 	int which = PRIO_PROCESS;
@@ -88,6 +95,7 @@ AvgCalculator2 avgUDPProcessingTime{0};
 //AvgCalculator avgUDPProcessingTime;
 std::uint32_t lastReceivedSequenceNr=0;
 const bool COMPARE_RECEIVED_DATA=false;
+std::vector<int> lostPacketsSeqNrDiffs;
 
 static void validateReceivedData(const uint8_t* dataP,size_t data_length){
     const auto data=std::vector<uint8_t>(dataP,dataP+data_length);
@@ -105,6 +113,7 @@ static void validateReceivedData(const uint8_t* dataP,size_t data_length){
         const auto delta=info.seqNr-lastReceivedSequenceNr;
         if(delta!=1){
             MLOGD<<"Missing a packet though FEC "<<delta;
+			lostPacketsSeqNrDiffs.push_back(delta);
         }
     }
     lastReceivedSequenceNr=info.seqNr;
@@ -186,6 +195,7 @@ static void test_latency(const Options& o){
    "\nBITRATE: "<<actualMBytesPerSecond<<" MB/s"<<" ("<<(actualMBytesPerSecond*8)<<"MBit/s)"<<"\n";
 
    MLOGD<<"Avg UDP latency between (I<=>O)"<<avgUDPProcessingTime.getAvgReadable()<<"\n";
+   MLOGD<<"LostPacketsSeqNrDiffs "<<vecAsString(lostPacketsSeqNrDiffs);
    //MLOGD<<"All samples "<<avgUDPProcessingTime.getAllSamplesSortedAsString()<<"\n";
    MLOGD<<"Low&high\n"<<avgUDPProcessingTime.getOnePercentLowHigh();
 }

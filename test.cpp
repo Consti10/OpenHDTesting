@@ -186,7 +186,7 @@ static void test_latency(const Options& o){
    " achieved bitrate: "<<actualMBytesPerSecond<<" MB/s"<<"\n";
 
    MLOGD<<"Avg UDP latency between (I<=>O)"<<avgUDPProcessingTime.getAvgReadable()<<"\n";
-   MLOGD<<"All samples "<<avgUDPProcessingTime.getAllSamplesSortedAsString()<<"\n";
+   //MLOGD<<"All samples "<<avgUDPProcessingTime.getAllSamplesSortedAsString()<<"\n";
    MLOGD<<"Low&high\n"<<avgUDPProcessingTime.getOnePercentLowHigh();
 }
 

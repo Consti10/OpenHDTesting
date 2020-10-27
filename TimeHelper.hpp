@@ -160,6 +160,7 @@ private:
     const size_t sampleSize;
     std::deque<std::chrono::nanoseconds> samples;
 public:
+    // Use zero for infinite n of recorded samples
     AvgCalculator2(size_t sampleSize=60):sampleSize(sampleSize){};
     //
     void add(const std::chrono::nanoseconds& value){
@@ -169,7 +170,7 @@ public:
         }
         samples.push_back(value);
         // Remove the oldest sample if needed
-        if(samples.size()>sampleSize){
+        if(sampleSize!=0 &&samples.size()>sampleSize){
             samples.pop_front();
         }
     }
@@ -201,7 +202,7 @@ public:
         ss<<"min="<<MyTimeHelper::R(getMin())<<" max="<<MyTimeHelper::R(getMax())<<" avg="<<MyTimeHelper::R(getAvg())<<" N samples="<<samples.size();
         return ss.str();
     }
-	std::string getAllSamplesAsString(){
+    std::string getAllSamplesAsString(){
          std::stringstream ss;
          for(const auto& sample:samples){
             ss<<" "<<MyTimeHelper::R(sample);
@@ -210,6 +211,20 @@ public:
     }
     size_t getNSamples()const{
         return samples.size();
+    }
+    // Sort all the samples from low to high
+    std::vector<std::chrono::nanoseconds> getSamplesSorted(){
+        auto ret=std::vector<std::chrono::nanoseconds>(samples.begin(),samples.end());
+        std::sort(ret.begin(), ret.end());
+        return ret;
+    }
+    std::string getAllSamplesSortedAsString(){
+        const auto valuesSorted=getSamplesSorted();
+        std::stringstream ss;
+        for(const auto& sample:valuesSorted){
+           ss<<" "<<MyTimeHelper::R(sample);
+        }
+        return ss.str();
     }
 };
 

@@ -84,8 +84,8 @@ struct SentDataSave{
     std::mutex mMutex;
 };
 SentDataSave sentDataSave{};
-//AvgCalculator2 avgUDPProcessingTime{1024*1024};
-AvgCalculator avgUDPProcessingTime;
+AvgCalculator2 avgUDPProcessingTime{0};
+//AvgCalculator avgUDPProcessingTime;
 std::uint32_t lastReceivedSequenceNr=0;
 const bool COMPARE_RECEIVED_DATA=false;
 
@@ -186,7 +186,7 @@ static void test_latency(const Options& o){
    " achieved bitrate: "<<actualMBytesPerSecond<<" MB/s"<<"\n";
 
    MLOGD<<"Avg UDP latency between (I<=>O)"<<avgUDPProcessingTime.getAvgReadable()<<"\n";
-   //MLOGD<<"All samples "<<avgUDPProcessingTime.getAllSamplesAsString();
+   MLOGD<<"All samples "<<avgUDPProcessingTime.getAllSamplesAsString();
 }
 
 

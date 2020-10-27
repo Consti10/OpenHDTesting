@@ -228,7 +228,7 @@ public:
     }
 	std::string getOnePercentLowHigh(){
         auto valuesSorted=getSamplesSorted();
-        const auto sizeOnePercent=valuesSorted.size()*0.001;
+        const auto sizeOnePercent=valuesSorted.size()/100;
         const auto onePercentLow=std::vector<std::chrono::nanoseconds>(valuesSorted.begin(),valuesSorted.begin()+sizeOnePercent);
         const auto tmpBegin=valuesSorted.begin()+valuesSorted.size()-sizeOnePercent;
         const auto onePercentHigh=std::vector<std::chrono::nanoseconds>(tmpBegin,valuesSorted.end());

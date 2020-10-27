@@ -99,7 +99,7 @@ std::vector<int> lostPacketsSeqNrDiffs;
 std::size_t receivedBytes=0;
 
 static void validateReceivedData(const uint8_t* dataP,size_t data_length){
-	receivedDataCount+=data_length;
+	receivedBytes+=data_length;
     const auto data=std::vector<uint8_t>(dataP,dataP+data_length);
     const auto info=getSequenceNumberAndTimestamp(data);
     const auto latency=std::chrono::steady_clock::now()-info.timestamp;
@@ -172,7 +172,7 @@ static void test_latency(const Options& o){
 		//(We are not interested in the latency of creating random data,even thouth it is really fas)
         writeSequenceNumberAndTimestamp(*buff);
         udpSender.mySendTo(buff->data(),buff->size());
-        writtenBytes+=o.PACKET_SIZE;
+        writtenBytes+=buff->size();
         writtenPackets+=1;
         currentSequenceNumber++;
         // wait until as much time is elapsed such that we hit the target packets per seconds

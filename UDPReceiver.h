@@ -35,7 +35,8 @@ public:
      * If @param WANTED_RCVBUF_SIZE is bigger than the size allocated by the OS a bigger buffer is requested, but it is not
      * guaranteed that the size is actually increased. Use 0 to leave the buffer size untouched
      */
-    UDPReceiver(JavaVM* javaVm,int port,std::string name,int CPUPriority,DATA_CALLBACK onDataReceivedCallback,size_t WANTED_RCVBUF_SIZE=0);
+    UDPReceiver(JavaVM* javaVm,int port,std::string name,int CPUPriority,DATA_CALLBACK onDataReceivedCallback,
+	size_t WANTED_RCVBUF_SIZE=0,const bool ENABLE_NONBLOCKING=false);
     /**
      * Register a callback that is called once and contains the IP address of the first received packet's sender
      */
@@ -73,6 +74,7 @@ private:
     JavaVM* javaVm;
 	std::chrono::steady_clock::time_point lastReceivedPacket{};
 	AvgCalculator avgDeltaBetweenPackets;
+	const bool ENABLE_NONBLOCKING;
 };
 
 #endif // FPV_VR_UDPRECEIVER_H

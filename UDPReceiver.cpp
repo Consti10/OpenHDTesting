@@ -13,8 +13,10 @@
 #include <NDKThreadHelper.hpp>
 #endif
 
-UDPReceiver::UDPReceiver(JavaVM* javaVm,int port,std::string name,int CPUPriority,DATA_CALLBACK  onDataReceivedCallback,size_t WANTED_RCVBUF_SIZE):
-        mPort(port),mName(std::move(name)),WANTED_RCVBUF_SIZE(WANTED_RCVBUF_SIZE),mCPUPriority(CPUPriority),onDataReceivedCallback(std::move(onDataReceivedCallback)),javaVm(javaVm){
+UDPReceiver::UDPReceiver(JavaVM* javaVm,int port,std::string name,int CPUPriority,DATA_CALLBACK  onDataReceivedCallback,
+size_t WANTED_RCVBUF_SIZE,const bool ENABLE_NONBLOCKING):
+        mPort(port),mName(std::move(name)),WANTED_RCVBUF_SIZE(WANTED_RCVBUF_SIZE),mCPUPriority(CPUPriority),onDataReceivedCallback(std::move(onDataReceivedCallback))
+		,javaVm(javaVm),ENABLE_NONBLOCKING(ENABLE_NONBLOCKING){
 }
 
 void UDPReceiver::registerOnSourceIPFound(SOURCE_IP_CALLBACK onSourceIP1) {
@@ -96,9 +98,14 @@ void UDPReceiver::receiveFromUDPLoop() {
         //I do not think so. recvfrom should return as soon as new data arrived,not when the buffer is full
         //But with a bigger buffer we do not loose packets when the receiver thread cannot keep up for a short amount of time
         // MSG_WAITALL does not wait until we have __n data, but a new UDP packet (that can be smaller than __n)
-        //const ssize_t message_length = recvfrom(mSocket,buff->data(),UDP_PACKET_MAX_SIZE, MSG_WAITALL,(sockaddr*)&source,&sourceLen);
-		const ssize_t message_length = recvfrom(mSocket,buff->data(),UDP_PACKET_MAX_SIZE, MSG_DONTWAIT,(sockaddr*)&source,&sourceLen);
-        //ssize_t message_length = recv(mSocket, buff, (size_t) mBuffsize, MSG_WAITALL);
+        //NOTE: NONBLOCKING hogs a whole CPU core !
+		ssize_t tmp;
+		if(ENABLE_NONBLOCKING){
+			tmp = recvfrom(mSocket,buff->data(),UDP_PACKET_MAX_SIZE, MSG_DONTWAIT,(sockaddr*)&source,&sourceLen);
+		}else{
+			tmp = recvfrom(mSocket,buff->data(),UDP_PACKET_MAX_SIZE, MSG_WAITALL,(sockaddr*)&source,&sourceLen);
+		}
+		const ssize_t message_length=tmp;
         if (message_length > 0) { //else -1 was returned;timeout/No data received
 			if(lastReceivedPacket!=std::chrono::steady_clock::time_point{}){
 				const auto delta=std::chrono::steady_clock::now()-lastReceivedPacket;

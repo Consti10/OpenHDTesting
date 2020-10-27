@@ -226,6 +226,24 @@ public:
         }
         return ss.str();
     }
+	std::string getOnePercentLowHigh(){
+        auto valuesSorted=getSamplesSorted();
+        const auto sizeOnePercent=valuesSorted.size()*0.001;
+        const auto onePercentLow=std::vector<std::chrono::nanoseconds>(valuesSorted.begin(),valuesSorted.begin()+sizeOnePercent);
+        const auto tmpBegin=valuesSorted.begin()+valuesSorted.size()-sizeOnePercent;
+        const auto onePercentHigh=std::vector<std::chrono::nanoseconds>(tmpBegin,valuesSorted.end());
+        std::stringstream ss;
+        ss<<"One Percent low:";
+        for(const auto& sample:onePercentLow){
+           ss<<" "<<MyTimeHelper::R(sample);
+        }
+        ss<<"\nOne Percent high:";
+        for(const auto& sample:onePercentHigh){
+           ss<<" "<<MyTimeHelper::R(sample);
+        }
+        ss<<"\n";
+        return ss.str();
+    }
 };
 
 

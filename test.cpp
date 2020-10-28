@@ -204,7 +204,7 @@ static void test_latency(const Options& o){
    MLOGD<<"LostPacketsSeqNrDiffs "<<vecAsString(lostPacketsSeqNrDiffs)<<"\n";
    //MLOGD<<"All samples "<<avgUDPProcessingTime.getAllSamplesSortedAsString()<<"\n";
    //MLOGD<<"Low&high\n"<<avgUDPProcessingTime.getOnePercentLowHigh();
-   MLOGD<<"Low&high\n"<<avgUDPProcessingTime.getNValuesLowHigh();
+   MLOGD<<"Low&high\n"<<avgUDPProcessingTime.getNValuesLowHigh(20);
 }
 
 

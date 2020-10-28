@@ -234,7 +234,7 @@ public:
         return MyTimeHelper::timeSamplesAsString(valuesSorted);
     }
 	// Returns up to count lowest and highest samples
-	std::string getNValuesLowHigh(int n){
+	std::string getNValuesLowHigh(int n=10){
 		auto valuesSorted=getSamplesSorted();
 		if(n>valuesSorted.size()/2){
 			n=valuesSorted.size()/2;

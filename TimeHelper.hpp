@@ -11,6 +11,9 @@
 #include <algorithm>
 #include "StringHelper.hpp"
 
+// This file holds various classes/namespaces usefully for measuring and comparing
+// latency samples
+
 namespace MyTimeHelper{
     // R stands for readable. Convert a std::chrono::duration into a readable format
     // Readable format is somewhat arbitrary, in this case readable means that for example
@@ -44,7 +47,7 @@ namespace MyTimeHelper{
         for(const auto& sample:samples){
            ss<<","<<MyTimeHelper::R(sample);
 		   counter++;
-		   if(counter%10==0){
+		   if(counter%10==0 && counter!=samples.size()){
 		     ss<<"\n";
 		   }
         }

@@ -233,6 +233,24 @@ public:
         const auto valuesSorted=getSamplesSorted();
         return MyTimeHelper::timeSamplesAsString(valuesSorted);
     }
+	// Returns up to count lowest and highest samples
+	std::string getNValuesLowHigh(int n){
+		auto valuesSorted=getSamplesSorted();
+		if(n>valuesSorted.size()/2){
+			n=valuesSorted.size()/2;
+		}
+        const auto xPercentLow=std::vector<std::chrono::nanoseconds>(valuesSorted.begin(),valuesSorted.begin()+n);
+        const auto tmpBegin=valuesSorted.begin()+valuesSorted.size()-n;
+        const auto xPercentHigh=std::vector<std::chrono::nanoseconds>(tmpBegin,valuesSorted.end());
+        std::stringstream ss;
+        ss<<n<<" lowest values:\n";
+        ss<<MyTimeHelper::timeSamplesAsString(xPercentLow);
+        ss<<"\n"<<n<<" highest values:\n";
+        ss<<MyTimeHelper::timeSamplesAsString(xPercentHigh);
+		ss<<"\n";
+        return ss.str();	
+	}
+	// returns the one percent low / high values
     std::string getOnePercentLowHigh(){
         auto valuesSorted=getSamplesSorted();
         const auto sizeOnePercent=valuesSorted.size()/100;

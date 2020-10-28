@@ -333,6 +333,7 @@ public:
     }
 };
 
+
 // Macro to measure execution time of a specific function.
 // See https://stackoverflow.com/questions/22387586/measuring-execution-time-of-a-function-in-c/61886741#61886741
 // Example output: ExecutionTime: For DecodeMJPEGtoANativeWindowBuffer is 54ms

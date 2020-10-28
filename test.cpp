@@ -199,9 +199,9 @@ static void test_latency(const Options& o){
    "\nBITRATE: "<<actualMBytesPerSecond<<" MB/s"<<" ("<<(actualMBytesPerSecond*8)<<"MBit/s)"<<"\n";
    MLOGD<<"N of bytes sent | rec | diff | perc lost ["<<writtenBytes<<" | "<<receivedBytes
    <<" | "<<nLostBytes<<" | "<<lostBytesPercentage<<"]\n";
-
-   MLOGD<<"Avg UDP latency between (I<=>O)"<<avgUDPProcessingTime.getAvgReadable()<<"\n";
    MLOGD<<"LostPacketsSeqNrDiffs "<<vecAsString(lostPacketsSeqNrDiffs)<<"\n";
+   MLOGD<<"------- Latency between (I<=>O) ------- \n"
+   MLOGD<<avgUDPProcessingTime.getAvgReadable()<<"\n";
    //MLOGD<<"All samples "<<avgUDPProcessingTime.getAllSamplesSortedAsString()<<"\n";
    //MLOGD<<"Low&high\n"<<avgUDPProcessingTime.getOnePercentLowHigh();
    MLOGD<<"Low&high\n"<<avgUDPProcessingTime.getNValuesLowHigh(20);

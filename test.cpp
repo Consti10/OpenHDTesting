@@ -251,7 +251,7 @@ int main(int argc, char *argv[])
     // 8 MBit/s is a just enough for encoded 720p video
 	MLOGD<<"Selected packet size"<<options.PACKET_SIZE<<"\n";
 	MLOGD<<"Selected input: "<<options.INPUT_PORT<<"\n";
-	//MLOGD<<"Selected output: "<<options.DESTINATION_IP<<" OUTPUT_PORT"<<options.OUTPUT_PORT<<"\n";
+	MLOGD<<"Selected output: "<<options.DESTINATION_IP<<" OUTPUT_PORT"<<options.OUTPUT_PORT<<"\n";
 	test_latency(options);
 
 

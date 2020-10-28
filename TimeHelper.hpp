@@ -6,10 +6,10 @@
 #define LIVEVIDEO10MS_TIMEHELPER_HPP
 
 #include "AndroidLogger.hpp"
+#include "StringHelper.hpp"
 #include <chrono>
 #include <deque>
 #include <algorithm>
-#include "StringHelper.hpp"
 
 // This file holds various classes/namespaces usefully for measuring and comparing
 // latency samples

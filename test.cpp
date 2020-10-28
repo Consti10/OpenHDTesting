@@ -200,7 +200,7 @@ static void test_latency(const Options& o){
    MLOGD<<"N of bytes sent | rec | diff | perc lost ["<<writtenBytes<<" | "<<receivedBytes
    <<" | "<<nLostBytes<<" | "<<lostBytesPercentage<<"]\n";
    MLOGD<<"LostPacketsSeqNrDiffs "<<vecAsString(lostPacketsSeqNrDiffs)<<"\n";
-   MLOGD<<"------- Latency between (I<=>O) ------- \n"
+   MLOGD<<"------- Latency between (I<=>O) ------- \n";
    MLOGD<<avgUDPProcessingTime.getAvgReadable()<<"\n";
    //MLOGD<<"All samples "<<avgUDPProcessingTime.getAllSamplesSortedAsString()<<"\n";
    //MLOGD<<"Low&high\n"<<avgUDPProcessingTime.getOnePercentLowHigh();

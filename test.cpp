@@ -9,14 +9,6 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 
-static std::string vecAsString(const std::vector<int>& vec){
-	std::stringstream ss;
-	for(const auto v:vec){
-		ss<<v<<",";
-	}
-	return ss.str();
-}
-
 static void printCurrentThreadPriority(const std::string name){
 	int which = PRIO_PROCESS;
     id_t pid = (id_t)getpid();
@@ -199,7 +191,7 @@ static void test_latency(const Options& o){
    "\nBITRATE: "<<actualMBytesPerSecond<<" MB/s"<<" ("<<(actualMBytesPerSecond*8)<<"MBit/s)"<<"\n";
    MLOGD<<"N of bytes sent | rec | diff | perc lost ["<<writtenBytes<<" | "<<receivedBytes
    <<" | "<<nLostBytes<<" | "<<lostBytesPercentage<<"]\n";
-   MLOGD<<"LostPacketsSeqNrDiffs "<<vecAsString(lostPacketsSeqNrDiffs)<<"\n";
+   MLOGD<<"LostPacketsSeqNrDiffs "<<StringHelper::vectorAsString(lostPacketsSeqNrDiffs)<<"\n";
    MLOGD<<"------- Latency between (I<=>O) ------- \n";
    MLOGD<<avgUDPProcessingTime.getAvgReadable()<<"\n";
    //MLOGD<<"All samples "<<avgUDPProcessingTime.getAllSamplesSortedAsString()<<"\n";
@@ -220,7 +212,7 @@ int main(int argc, char *argv[])
 	int output_port=6001;
 	// default localhost
 	int mode=0;
-    while ((opt = getopt(argc, argv, "s:p:t:i:o:m:")) != -1) {
+    while ((opt = getopt(argc, argv, "s:p:t:m:")) != -1) {
         switch (opt) {
         case 's':
             ps = atoi(optarg);
@@ -244,7 +236,7 @@ int main(int argc, char *argv[])
         show_usage:
             MLOGD<<"Usage: [-s=packet size in bytes] [-p=packets per second] [-t=time to run in seconds]"
 			//<<"[-i=input udp port] [-o=output udp port]"
-			<<" [-m= mode 0 for sendto localhost else airpi]\n";
+			<<" [-m= mode 0 for sendto localhost else airpi (ethernet+wfb)]\n";
             return 1;
         }
     }

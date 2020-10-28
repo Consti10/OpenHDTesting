@@ -242,7 +242,7 @@ int main(int argc, char *argv[])
     }
 	// Mode test localhost
 	const Options options0{ps,pps,pps*wantedTime,6001,6001,"127.0.0.1"};
-	// Mode test wfb latency, data goes out port 6002 to air pi where it is received and transmitted via wb
+	// Mode test wfb latency, data goes via ethernet to port 6002 on air pi where it is received and transmitted via wb
 	// On the ground data is received via wb and forwarded to port 6001
 	const Options options1{ps,pps,pps*wantedTime,6001,6002,"192.168.0.14"};
 	const Options options = (mode==0) ? options0 : options1;

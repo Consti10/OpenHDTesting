@@ -254,5 +254,6 @@ int main(int argc, char *argv[])
 	MLOGD<<"Selected output: "<<options.DESTINATION_IP<<" OUTPUT_PORT"<<options.OUTPUT_PORT<<"\n";
 	test_latency(options);
 
+
     return 0;
 }

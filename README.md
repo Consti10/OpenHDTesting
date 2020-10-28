@@ -1,5 +1,5 @@
 Compile code:
-g++ -std=c++17 test.cpp UDPReceiver.cpp UDPSender.cpp -o test -lpthread
+Just run make 
 
 Collection of commands:
 git add . && git commit -m "X" && git push

@@ -169,7 +169,7 @@ static void test_latency(const Options& o){
             sentDataSave.mMutex.unlock();
         }
 		//write sequence number and timestamp after random data was created
-		//(We are not interested in the latency of creating random data,even thouth it is really fas)
+		//(We are not interested in the latency of creating random data,even thouth it is really fast)
         writeSequenceNumberAndTimestamp(*buff);
         udpSender.mySendTo(buff->data(),buff->size());
         writtenBytes+=buff->size();

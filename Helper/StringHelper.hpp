@@ -146,7 +146,7 @@ public:
     }
 
     static void test1(){
-        //doubleToWString(10.9234, 10, 4);
+        doubleToWString(10.9234, 10, 4);
         doubleToWString(10.9234, 10, 2);
         doubleToWString(10.9234, 10, 0);
         doubleToWString(10.9234, 4, 4);

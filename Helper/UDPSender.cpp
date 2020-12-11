@@ -65,7 +65,7 @@ void UDPSender::mySendTo(const uint8_t* data, ssize_t data_length) {
     //}
 }
 void UDPSender::logSendtoDelay() {
-    MLOGD<<"Time UDPSender "<<timeSpentSending.getAvgReadable();
+    MLOGD<<"Time UDPSender "<<timeSpentSending.getAvgReadable()<<"\n";
 }
 
 

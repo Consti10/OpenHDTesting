@@ -59,6 +59,7 @@ PacketInfoData getSequenceNumberAndTimestamp(const std::vector<uint8_t>& data){
 }
 
 // Returns true if everyhting except the first couble of bytes (PacketInfoData) match
+// first couple of bytes are the PacketInfoData (which is written after creating the packet)
 bool compareSentAndReceivedPacket(const std::vector<uint8_t>& sb,const std::vector<uint8_t>& rb){
     if(sb.size()!=rb.size()){
         return false;
@@ -86,17 +87,19 @@ SentDataSave sentDataSave{};
 AvgCalculator2 avgUDPProcessingTime{0};
 //AvgCalculator avgUDPProcessingTime;
 std::uint32_t lastReceivedSequenceNr=0;
-const bool COMPARE_RECEIVED_DATA=false;
+const bool COMPARE_RECEIVED_DATA=true;
 std::vector<int> lostPacketsSeqNrDiffs;
+std::size_t receivedPackets=0;
 std::size_t receivedBytes=0;
 
 static void validateReceivedData(const uint8_t* dataP,size_t data_length){
+    receivedPackets++;
 	receivedBytes+=data_length;
     const auto data=std::vector<uint8_t>(dataP,dataP+data_length);
     const auto info=getSequenceNumberAndTimestamp(data);
     const auto latency=std::chrono::steady_clock::now()-info.timestamp;
 	if(latency>std::chrono::milliseconds(1)){
-		MLOGD<<"XGot data"<<data_length<<" "<<info.seqNr<<" "<<MyTimeHelper::R(latency)<<"\n";
+        std::cout<<"XGot data"<<data_length<<" "<<info.seqNr<<" "<<MyTimeHelper::R(latency)<<"\n";
 	}
     //MLOGD<<"XGot data"<<data_length<<" "<<info.seqNr<<" "<<MyTimeHelper::R(latency)<<"\n";
     // do not use the first couple of packets, system needs to ramp up first
@@ -106,7 +109,7 @@ static void validateReceivedData(const uint8_t* dataP,size_t data_length){
     if(lastReceivedSequenceNr!=0){
         const auto delta=info.seqNr-lastReceivedSequenceNr;
         if(delta!=1){
-            MLOGD<<"Missing a packet though FEC "<<delta;
+            std::cout<<"Missing a packet though FEC "<<delta<<"\n";
 			lostPacketsSeqNrDiffs.push_back(delta);
         }
     }
@@ -117,9 +120,9 @@ static void validateReceivedData(const uint8_t* dataP,size_t data_length){
            const auto originalPacketData=sentDataSave.sentPackets.at(info.seqNr);
            if(!compareSentAndReceivedPacket(*originalPacketData,data)){
                 //Also this should never happen !
-                MLOGE<<"Packets do not match !"<<"\n";
+               std::cout<<"Packets do not match !"<<"\n";
            }else{
-                //MLOGD<<"Packets do match"<<"\n";
+                //std::cout<<"Packets do match"<<"\n";
            }
            // Free memory such that we do not run out of RAM (once received,we do not need the packet a second time)
            //originalPacketData.at(info.seqNr)->reset();
@@ -161,7 +164,7 @@ static void test_latency(const Options& o){
             sentDataSave.mMutex.unlock();
         }
 		//write sequence number and timestamp after random data was created
-		//(We are not interested in the latency of creating random data,even thouth it is really fast)
+		//(We are not interested in the latency of creating random data,even though it is really fast)
         writeSequenceNumberAndTimestamp(*buff);
         udpSender.mySendTo(buff->data(),buff->size());
         writtenBytes+=buff->size();
@@ -170,33 +173,37 @@ static void test_latency(const Options& o){
         // wait until as much time is elapsed such that we hit the target packets per seconds
         const auto timePointReadyToSendNextPacket=firstPacketTimePoint+i*TIME_BETWEEN_PACKETS;
         while(std::chrono::steady_clock::now()<timePointReadyToSendNextPacket){
-            //ucomment for busy wait (no scheduler interruption)
+            //uncomment for busy wait (no scheduler interruption)
 			std::this_thread::sleep_for(std::chrono::microseconds(10));
         }
     }
     const auto testEnd=std::chrono::steady_clock::now();
+    // Wait for any packet that might be still in transit
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    udpReceiver.stopReceiving();
+    udpSender.logSendtoDelay();
+
     const double testTimeSeconds=(testEnd-testBegin).count()/1000.0f/1000.0f/1000.0f;
     const double actualPacketsPerSecond=(double)o.N_PACKETS/testTimeSeconds;
     const double actualMBytesPerSecond=(double)writtenBytes/testTimeSeconds/1024.0f/1024;
-	const int nLostBytes=(writtenBytes-receivedBytes);
-    const float lostBytesPercentage=((float)receivedBytes/(float)writtenBytes)*100.0f;
+	const long nLostBytes=(writtenBytes-receivedBytes);
+	const long nLostPackets=(writtenPackets-receivedPackets);
+    const double lostBytesPercentage=((double)receivedBytes/(double)writtenBytes)*100.0f;
 
-   // Wait for any packet that might be still in transit
-   std::this_thread::sleep_for(std::chrono::seconds(1));
-   udpReceiver.stopReceiving();
-   udpSender.logSendtoDelay();
 
-   MLOGD<<"Testing took:"<<testTimeSeconds<<"\n";
-   MLOGD<<"WANTED_PACKETS_PER_SECOND "<<o.WANTED_PACKETS_PER_SECOND<<" Got "<<actualPacketsPerSecond<<
-   "\nBITRATE: "<<actualMBytesPerSecond<<" MB/s"<<" ("<<(actualMBytesPerSecond*8)<<"MBit/s)"<<"\n";
-   MLOGD<<"N of bytes sent | rec | diff | perc lost ["<<writtenBytes<<" | "<<receivedBytes
-   <<" | "<<nLostBytes<<" | "<<lostBytesPercentage<<"]\n";
-   MLOGD<<"LostPacketsSeqNrDiffs "<<StringHelper::vectorAsString(lostPacketsSeqNrDiffs)<<"\n";
-   MLOGD<<"------- Latency between (I<=>O) ------- \n";
-   MLOGD<<avgUDPProcessingTime.getAvgReadable()<<"\n";
-   //MLOGD<<"All samples "<<avgUDPProcessingTime.getAllSamplesSortedAsString()<<"\n";
-   //MLOGD<<"Low&high\n"<<avgUDPProcessingTime.getOnePercentLowHigh();
-   MLOGD<<"Low&high\n"<<avgUDPProcessingTime.getNValuesLowHigh(20);
+
+   std::cout<<"Testing took:"<<testTimeSeconds<<"s\n";
+   std::cout<<"WANTED_PACKETS_PER_SECOND "<<o.WANTED_PACKETS_PER_SECOND<<" Got "<<actualPacketsPerSecond<<
+   "\nBITRATE: "<<actualMBytesPerSecond<<"MB/s"<<" ("<<(actualMBytesPerSecond*8)<<"MBit/s)"<<"\n";
+   std::cout<<"N of packets sent | rec | diff ["<<writtenPackets<<" | "<<receivedPackets<<" | "<<nLostPackets<<"]\n";
+   //std::cout<<"N of bytes sent | rec | diff | perc lost ["<<writtenBytes<<" | "<<receivedBytes
+   //<<" | "<<nLostBytes<<" | "<<lostBytesPercentage<<"]\n";
+    std::cout<<"LostPacketsSeqNrDiffs "<<StringHelper::vectorAsString(lostPacketsSeqNrDiffs)<<"\n";
+    std::cout<<"------- Latency between (I<=>O) ------- \n";
+    std::cout<<avgUDPProcessingTime.getAvgReadable()<<"\n";
+   //std::cout<<"All samples "<<avgUDPProcessingTime.getAllSamplesSortedAsString()<<"\n";
+   //std::cout<<"Low&high\n"<<avgUDPProcessingTime.getOnePercentLowHigh();
+    std::cout<<"Low&high\n"<<avgUDPProcessingTime.getNValuesLowHigh(20);
 }
 
 
@@ -234,7 +241,7 @@ int main(int argc, char *argv[])
 			break;
         default: /* '?' */
         show_usage:
-            MLOGD<<"Usage: [-s=packet size in bytes] [-p=packets per second] [-t=time to run in seconds]"
+            std::cout<<"Usage: [-s=packet size in bytes] [-p=packets per second] [-t=time to run in seconds]"
 			//<<"[-i=input udp port] [-o=output udp port]"
 			<<" [-m= mode 0 for sendto localhost else airpi (ethernet+wfb)]\n";
             return 1;
@@ -245,13 +252,15 @@ int main(int argc, char *argv[])
 	// Mode test wfb latency, data goes via ethernet to port 6002 on air pi where it is received and transmitted via wb
 	// On the ground data is received via wb and forwarded to port 6001
 	const Options options1{ps,pps,pps*wantedTime,6001,6002,"192.168.0.14"};
-	const Options options = (mode==0) ? options0 : options1;
+	// for when the tx and rx is on the same pc
+	const Options options2{ps,pps,pps*wantedTime,6100,6000,"127.0.0.1"};
+	const Options options = (mode==0) ? options0 : options2;
 
     // For a packet size of 1024 bytes, 1024 packets per second equals 1 MB/s or 8 MBit/s
     // 8 MBit/s is a just enough for encoded 720p video
-	MLOGD<<"Selected packet size"<<options.PACKET_SIZE<<"\n";
-	MLOGD<<"Selected input: "<<options.INPUT_PORT<<"\n";
-	MLOGD<<"Selected output: "<<options.DESTINATION_IP<<" OUTPUT_PORT"<<options.OUTPUT_PORT<<"\n";
+    std::cout<<"Selected packet size"<<options.PACKET_SIZE<<"\n";
+    std::cout<<"Selected input: "<<options.INPUT_PORT<<"\n";
+    std::cout<<"Selected output: "<<options.DESTINATION_IP<<" OUTPUT_PORT"<<options.OUTPUT_PORT<<"\n";
 	test_latency(options);
 
 

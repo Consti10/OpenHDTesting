@@ -1,3 +1,5 @@
+Update 16.12.2020 : archieved and merged into OpenHD
+
 Compile code:
 Just run make 
 
